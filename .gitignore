@@ -1,0 +1,23 @@
+# Node
+node_modules
+/.pnp
+.pnp.js
+
+# Hardhat files
+cache
+artifacts
+
+# Environment variables
+.env
+.env.local
+
+# VSCode workspace prefs.
+.vscode
+
+# NextJS
+.vercel
+.next
+
+# misc
+.DS_Store
+*.pem
