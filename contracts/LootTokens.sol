@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "./LootTokensMetadata.sol";
 import {Base64, toString} from "./MetadataUtils.sol";
 
+import "hardhat/console.sol";
 /// @title Loot Tokens
 /// @author Georgios Konstantopoulos
 /// @notice Allows "opening" your ERC721 Loot bags and extracting the items inside it
@@ -46,16 +47,7 @@ contract LootTokens is ERC1155, LootTokensMetadata {
     function open(address who, uint256 tokenId) private {
         // NB: We patched ERC1155 to expose `_balances` so
         // that we can manually mint to a user, and manually emit a `TransferBatch`
-        // event. If that is unsafe, we could alternatively use the following which
-        // will default to OZ's internal method.
-        // mintItem(tokenId, weaponComponents, WEAPON);
-        // mintItem(tokenId, chestComponents, CHEST);
-        // mintItem(tokenId, headComponents, HEAD);
-        // mintItem(tokenId, waistComponents, WAIST);
-        // mintItem(tokenId, footComponents, FOOT);
-        // mintItem(tokenId, handComponents, HAND);
-        // mintItem(tokenId, neckComponents, NECK);
-        // mintItem(tokenId, ringComponents, RING);
+        // event. If that's unsafe, we can fallback to using _mint
         uint256[] memory ids = new uint256[](8);
         uint256[] memory amounts = new uint256[](8);
         ids[0] = itemId(tokenId, weaponComponents, WEAPON);
@@ -92,19 +84,6 @@ contract LootTokens is ERC1155, LootTokensMetadata {
 
         // 2. give back the bag
         loot.safeTransferFrom(address(this), msg.sender, tokenId);
-    }
-
-    /// @notice Extracts the components associated with the ERC721 Loot bag using
-    /// dhof's LootComponents utils and proceeds to mint a token for the corresponding
-    /// token id to the msg.sender.
-    function mintItem(
-        uint256 tokenId,
-        function(uint256) view returns (uint256[5] memory) componentsFn,
-        uint256 itemType
-    ) private {
-        uint256[5] memory components = componentsFn(tokenId);
-        uint256 id = TokenId.toId(components, itemType);
-        _mint(msg.sender, id, 1, "");
     }
 
     function itemId(
