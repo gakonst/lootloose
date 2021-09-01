@@ -109,40 +109,40 @@ contract LootTokensMetadata is LootComponents {
     }
 
     // View helpers for getting the item ID that corresponds to a bag's items
-    function weaponId(uint256 tokenId) public view returns (uint256) {
+    function weaponId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(weaponComponents(tokenId), WEAPON);
     }
 
-    function chestId(uint256 tokenId) public view returns (uint256) {
+    function chestId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(chestComponents(tokenId), CHEST);
     }
 
-    function headId(uint256 tokenId) public view returns (uint256) {
+    function headId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(headComponents(tokenId), HEAD);
     }
 
-    function waistId(uint256 tokenId) public view returns (uint256) {
+    function waistId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(waistComponents(tokenId), WAIST);
     }
 
-    function footId(uint256 tokenId) public view returns (uint256) {
+    function footId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(footComponents(tokenId), FOOT);
     }
 
-    function handId(uint256 tokenId) public view returns (uint256) {
+    function handId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(handComponents(tokenId), HAND);
     }
 
-    function neckId(uint256 tokenId) public view returns (uint256) {
+    function neckId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(neckComponents(tokenId), NECK);
     }
 
-    function ringId(uint256 tokenId) public view returns (uint256) {
+    function ringId(uint256 tokenId) public pure returns (uint256) {
         return TokenId.toId(ringComponents(tokenId), RING);
     }
 
     // Given an erc721 bag, returns the erc1155 token ids of the items in the bag
-    function ids(uint256 tokenId) public view returns (ItemIds memory) {
+    function ids(uint256 tokenId) public pure returns (ItemIds memory) {
         return
             ItemIds({
                 weapon: weaponId(tokenId),

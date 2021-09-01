@@ -287,7 +287,7 @@ contract LootComponents {
 
     function weaponComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "WEAPON", weaponsLength);
@@ -295,7 +295,7 @@ contract LootComponents {
 
     function chestComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "CHEST", chestLength);
@@ -303,7 +303,7 @@ contract LootComponents {
 
     function headComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "HEAD", headLength);
@@ -311,7 +311,7 @@ contract LootComponents {
 
     function waistComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "WAIST", waistLength);
@@ -319,7 +319,7 @@ contract LootComponents {
 
     function footComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "FOOT", footLength);
@@ -327,7 +327,7 @@ contract LootComponents {
 
     function handComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "HAND", handLength);
@@ -335,7 +335,7 @@ contract LootComponents {
 
     function neckComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "NECK", necklacesLength);
@@ -343,7 +343,7 @@ contract LootComponents {
 
     function ringComponents(uint256 tokenId)
         internal
-        view
+        pure
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "RING", ringsLength);
