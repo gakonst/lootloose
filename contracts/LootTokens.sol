@@ -27,14 +27,36 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         loot.safeTransferFrom(msg.sender, address(this), tokenId);
 
         // 2. mint the items
-        mintItem(tokenId, weaponComponents, WEAPON);
-        mintItem(tokenId, chestComponents, CHEST);
-        mintItem(tokenId, headComponents, HEAD);
-        mintItem(tokenId, waistComponents, WAIST);
-        mintItem(tokenId, footComponents, FOOT);
-        mintItem(tokenId, handComponents, HAND);
-        mintItem(tokenId, neckComponents, NECK);
-        mintItem(tokenId, ringComponents, RING);
+        // NB: We patched ERC1155 to expose `_balances` so
+        // that we can manually mint to a user, and manually emit a `TransferBatch`
+        // event. If that is unsafe, we could alternatively use the following which
+        // will default to OZ's internal method.
+        // mintItem(tokenId, weaponComponents, WEAPON);
+        // mintItem(tokenId, chestComponents, CHEST);
+        // mintItem(tokenId, headComponents, HEAD);
+        // mintItem(tokenId, waistComponents, WAIST);
+        // mintItem(tokenId, footComponents, FOOT);
+        // mintItem(tokenId, handComponents, HAND);
+        // mintItem(tokenId, neckComponents, NECK);
+        // mintItem(tokenId, ringComponents, RING);
+        uint256[] memory ids = new uint256[](8);
+        uint256[] memory amounts = new uint256[](8);
+        // 51k gas per call
+        ids[0] = itemId(tokenId, weaponComponents, WEAPON);
+        ids[1] = itemId(tokenId, chestComponents, CHEST);
+        ids[2] = itemId(tokenId, headComponents, HEAD);
+        ids[3] = itemId(tokenId, waistComponents, WAIST);
+        ids[4] = itemId(tokenId, footComponents, FOOT);
+        ids[5] = itemId(tokenId, handComponents, HAND);
+        ids[6] = itemId(tokenId, neckComponents, NECK);
+        ids[7] = itemId(tokenId, ringComponents, RING);
+        for (uint256 i = 0; i < ids.length; i++) {
+            amounts[i] = 1;
+            // +21k per call / unavoidable
+            _balances[ids[i]][msg.sender] += 1;
+        }
+
+        emit TransferBatch(msg.sender, address(0), msg.sender, ids, amounts);
     }
 
     /// @notice Re-assembles the original Loot bag by burning all the ERC1155 tokens
@@ -67,6 +89,15 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         uint256[5] memory components = componentsFn(tokenId);
         uint256 id = TokenId.toId(components, itemType);
         _mint(msg.sender, id, 1, "");
+    }
+
+    function itemId(
+        uint256 tokenId,
+        function(uint256) view returns (uint256[5] memory) componentsFn,
+        uint256 itemType
+    ) private view returns (uint256) {
+        uint256[5] memory components = componentsFn(tokenId);
+        return TokenId.toId(components, itemType);
     }
 
     /// @notice Extracts the components associated with the ERC721 Loot bag using
