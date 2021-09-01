@@ -13,8 +13,11 @@ Each ERC1155's token URI is a b64 encoded SVG image, with the item's name (just 
 any other item from the bag that contained it).
 
 You can mint the 8 ERC-1155 tokens via 2 ways:
-1. `approve` the `LootUnchained.sol` contract to spend your NFT (or via `setApprovalForAll`)
+1. `approve` the `LootUnchained.sol` contract to spend your NFT (or via `setApprovalForAll`) and calling `open`.
 2. Transferring your NFT directly to the contract, triggerring the `onERC721Received` callback
+
+You can reassemble the bag by first `approve` or `setApprovalForAll` for the tokens
+contained in the bag and then calling `reassemble`.
 
 Average gas cost to `open` is 322k gas, to `reassemble` 165k.
 
