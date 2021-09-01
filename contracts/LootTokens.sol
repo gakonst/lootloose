@@ -26,7 +26,19 @@ contract LootTokens is ERC1155, LootTokensMetadata {
     /// do its part
     function open(uint256 tokenId) public {
         loot.safeTransferFrom(msg.sender, address(this), tokenId);
-        open(msg.sender, tokenId);
+    }
+
+    /// @notice ERC721 callback which will open the bag
+    function onERC721Received(
+        address,
+        address from,
+        uint256 tokenId,
+        bytes calldata
+    ) external returns (bytes4) {
+        // only supports callback from the Loot contract
+        require(msg.sender == address(loot));
+        open(from, tokenId);
+        return LootTokens.onERC721Received.selector;
     }
 
     /// @notice Opens your Loot bag and mints you 8 ERC-1155 tokens for each item
@@ -153,19 +165,5 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         );
 
         return output;
-    }
-
-    function onERC721Received(
-        // sender of the tx
-        address,
-        // the user that sent in the nft
-        address from,
-        uint256 tokenId,
-        bytes calldata
-    ) external returns (bytes4) {
-        // only supports callback from the Loot contract
-        require(msg.sender == address(loot));
-        open(from, tokenId);
-        return LootTokens.onERC721Received.selector;
     }
 }
