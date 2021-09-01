@@ -4,18 +4,18 @@ on:
       - master
   pull_request:
 
-name: Tests
-  steps:
-    - uses: actions/checkout@v2
+jobs: 
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+      - uses: actions/checkout@v2
 
-    - name: Fetch history
-      run: git fetch
+      - name: Setup node
+        uses: actions/setup-node@v1
 
-    - name: Setup node
-      uses: actions/setup-node@v1
+      - name: Install Dependencies
+        run: yarn install
 
-    - name: Install Dependencies
-      run: yarn install
-
-    - name: Test
-      run: yarn test
+      - name: Test
+        run: yarn test
