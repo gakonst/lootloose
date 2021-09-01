@@ -50,6 +50,7 @@ contract LootComponents {
         "Tome", // 16
         "Book" // 17
     ];
+    uint256 constant weaponsLength = 18;
 
     string[] internal chestArmor = [
         "Divine Robe", // 0
@@ -68,6 +69,7 @@ contract LootComponents {
         "Chain Mail", // 13
         "Ring Mail" // 14
     ];
+    uint256 constant chestLength = 15;
 
     string[] internal headArmor = [
         "Ancient Helm", // 0
@@ -86,6 +88,7 @@ contract LootComponents {
         "Linen Hood", // 13
         "Hood" // 14
     ];
+    uint256 constant headLength = 15;
 
     string[] internal waistArmor = [
         "Ornate Belt", // 0
@@ -104,6 +107,7 @@ contract LootComponents {
         "Linen Sash", // 13
         "Sash" // 14
     ];
+    uint256 constant waistLength = 15;
 
     string[] internal footArmor = [
         "Holy Greaves", // 0
@@ -122,6 +126,7 @@ contract LootComponents {
         "Linen Shoes", // 13
         "Shoes" // 14
     ];
+    uint256 constant footLength = 15;
 
     string[] internal handArmor = [
         "Holy Gauntlets", // 0
@@ -140,12 +145,14 @@ contract LootComponents {
         "Linen Gloves", // 13
         "Gloves" // 14
     ];
+    uint256 constant handLength = 15;
 
     string[] internal necklaces = [
         "Necklace", // 0
         "Amulet", // 1
         "Pendant" // 2
     ];
+    uint256 constant necklacesLength = 3;
 
     string[] internal rings = [
         "Gold Ring", // 0
@@ -154,6 +161,7 @@ contract LootComponents {
         "Platinum Ring", // 3
         "Titanium Ring" // 4
     ];
+    uint256 constant ringsLength = 5;
 
     string[] internal suffixes = [
         // <no suffix>          // 0
@@ -174,6 +182,7 @@ contract LootComponents {
         "of Reflection", // 15
         "of the Twins" // 16
     ];
+    uint256 constant suffixesLength = 16;
 
     string[] internal namePrefixes = [
         // <no name>            // 0
@@ -247,6 +256,7 @@ contract LootComponents {
         "Light's", // 68
         "Shimmering" // 69
     ];
+    uint256 constant namePrefixesLength = 69;
 
     string[] internal nameSuffixes = [
         // <no name>            // 0
@@ -269,6 +279,7 @@ contract LootComponents {
         "Sun", // 17
         "Moon" // 18
     ];
+    uint256 constant nameSuffixesLength = 18;
 
     function random(string memory input) internal pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(input)));
@@ -279,7 +290,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "WEAPON", weapons);
+        return pluck(tokenId, "WEAPON", weaponsLength);
     }
 
     function chestComponents(uint256 tokenId)
@@ -287,7 +298,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "CHEST", chestArmor);
+        return pluck(tokenId, "CHEST", chestLength);
     }
 
     function headComponents(uint256 tokenId)
@@ -295,7 +306,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "HEAD", headArmor);
+        return pluck(tokenId, "HEAD", headLength);
     }
 
     function waistComponents(uint256 tokenId)
@@ -303,7 +314,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "WAIST", waistArmor);
+        return pluck(tokenId, "WAIST", waistLength);
     }
 
     function footComponents(uint256 tokenId)
@@ -311,7 +322,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "FOOT", footArmor);
+        return pluck(tokenId, "FOOT", footLength);
     }
 
     function handComponents(uint256 tokenId)
@@ -319,7 +330,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "HAND", handArmor);
+        return pluck(tokenId, "HAND", handLength);
     }
 
     function neckComponents(uint256 tokenId)
@@ -327,7 +338,7 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "NECK", necklaces);
+        return pluck(tokenId, "NECK", necklacesLength);
     }
 
     function ringComponents(uint256 tokenId)
@@ -335,13 +346,13 @@ contract LootComponents {
         view
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "RING", rings);
+        return pluck(tokenId, "RING", ringsLength);
     }
 
     function pluck(
         uint256 tokenId,
         string memory keyPrefix,
-        string[] memory sourceArray
+        uint256 sourceArrayLength
     ) internal view returns (uint256[5] memory) {
         uint256[5] memory components;
 
@@ -349,7 +360,7 @@ contract LootComponents {
             string(abi.encodePacked(keyPrefix, toString(tokenId)))
         );
 
-        components[0] = rand % sourceArray.length;
+        components[0] = rand % sourceArrayLength;
         components[1] = 0;
         components[2] = 0;
 
