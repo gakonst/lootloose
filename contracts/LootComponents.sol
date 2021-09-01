@@ -377,10 +377,13 @@ contract LootComponents {
                 components[4] = 1;
             }
         }
+
         return components;
     }
 
-    function toString(uint256 value) internal pure returns (string memory) {
+    // TODO: This costs 2.5k gas per invocation. We call it a lot when minting.
+    // How can this be improved?
+    function toString(uint256 value) internal view returns (string memory) {
         // Inspired by OraclizeAPI's implementation - MIT license
         // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
 

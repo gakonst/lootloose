@@ -41,7 +41,6 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         // mintItem(tokenId, ringComponents, RING);
         uint256[] memory ids = new uint256[](8);
         uint256[] memory amounts = new uint256[](8);
-        // 51k gas per call
         ids[0] = itemId(tokenId, weaponComponents, WEAPON);
         ids[1] = itemId(tokenId, chestComponents, CHEST);
         ids[2] = itemId(tokenId, headComponents, HEAD);
