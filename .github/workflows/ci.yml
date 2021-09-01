@@ -21,3 +21,5 @@ jobs:
 
       - name: Test
         run: yarn test
+        env:
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}

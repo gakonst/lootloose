@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv"; // Env
 
 // Hardhat plugins
+import "@nomiclabs/hardhat-ethers";
 import "hardhat-gas-reporter"; // Gas stats
 import "hardhat-abi-exporter"; // ABI exports
 

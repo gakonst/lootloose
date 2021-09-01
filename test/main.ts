@@ -142,11 +142,11 @@ describe("LootTokens", () => {
       );
       // now they have 2 divine robes
       expect(
-        await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+        (await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)).toNumber()
       ).to.be.equal(2);
     });
 
-    it.only("Should open a bag w/ simple transfer", async () => {
+    it("Should open a bag w/ simple transfer", async () => {
       const loot = await getLootContract(ADDRESSES.OWNER_LOOT_ONE);
       await loot.functions["safeTransferFrom(address,address,uint256)"](
         ADDRESSES.OWNER_LOOT_ONE,
@@ -154,7 +154,7 @@ describe("LootTokens", () => {
         TOKEN_IDS.LOOT_ONE
       );
       expect(
-        await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+        (await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)).toNumber()
       ).to.be.equal(1);
     });
 
@@ -174,7 +174,7 @@ describe("LootTokens", () => {
 
       // we no longer own the divine robe 1155
       expect(
-        await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+        (await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)).toNumber()
       ).to.be.equal(0);
 
       // but we now re-own the lootbox
