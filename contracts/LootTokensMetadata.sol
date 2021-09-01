@@ -18,6 +18,17 @@ contract LootTokensMetadata is LootComponents {
     uint256 internal constant NECK = 0x6;
     uint256 internal constant RING = 0x7;
 
+    string[] internal itemTypes = [
+        "Weapon",
+        "Chest",
+        "Head",
+        "Waist",
+        "Foot",
+        "Hand",
+        "Neck",
+        "Ring"
+    ];
+
     struct ItemIds {
         uint256 weapon;
         uint256 chest;
@@ -87,7 +98,7 @@ contract LootTokensMetadata is LootComponents {
         if (components[2] > 0) {
             // prefix
             string memory name = string(
-                abi.encodePacked('"', namePrefixes[components[2] - 1])
+                abi.encodePacked("'", namePrefixes[components[2] - 1])
             );
             if (components[3] > 0) {
                 name = string(
@@ -95,7 +106,7 @@ contract LootTokensMetadata is LootComponents {
                 );
             }
 
-            name = string(abi.encodePacked(name, '" '));
+            name = string(abi.encodePacked(name, "' "));
 
             item = string(abi.encodePacked(name, item));
         }

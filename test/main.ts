@@ -103,9 +103,9 @@ describe("LootTokens", () => {
         weapon: "Falchion of Fury",
         chest: "Divine Robe",
         head: "Great Helm",
-        waist: '"Grim Peak" Sash of Enlightenment +1',
+        waist: "'Grim Peak' Sash of Enlightenment +1",
         foot: "Linen Shoes of Titans",
-        hand: '"Tempest Grasp" Gloves of Protection +1',
+        hand: "'Tempest Grasp' Gloves of Protection +1",
         neck: "Necklace of Protection",
         ring: "Bronze Ring",
       };
@@ -142,7 +142,9 @@ describe("LootTokens", () => {
       );
       // now they have 2 divine robes
       expect(
-        (await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)).toNumber()
+        (
+          await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+        ).toNumber()
       ).to.be.equal(2);
     });
 
@@ -154,7 +156,9 @@ describe("LootTokens", () => {
         TOKEN_IDS.LOOT_ONE
       );
       expect(
-        (await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)).toNumber()
+        (
+          await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+        ).toNumber()
       ).to.be.equal(1);
     });
 
@@ -174,7 +178,9 @@ describe("LootTokens", () => {
 
       // we no longer own the divine robe 1155
       expect(
-        (await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)).toNumber()
+        (
+          await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+        ).toNumber()
       ).to.be.equal(0);
 
       // but we now re-own the lootbox
@@ -183,12 +189,80 @@ describe("LootTokens", () => {
       );
     });
 
+    describe("Opensea-compliant metadata", async () => {
+      const checkMetadata = async (id: any, attributes: any, name: string) => {
+        let meta = await LootItems.tokenURI(id);
+        meta = meta.replace("data:application/json;base64,", "");
+        meta = new Buffer(meta, "base64").toString();
+        meta = JSON.parse(meta);
+        expect(meta.name).to.be.deep.equal(name);
+        expect(meta.attributes).to.be.deep.equal(attributes);
+      };
+
+      it("Correct metadata for: 'Tempest Grasp' Gloves of Protection +1", async () => {
+        const id = await LootItems.handId(TOKEN_IDS.LOOT_TWO);
+        const attributes = [
+          {
+            trait_type: "Slot",
+            value: "Hand",
+          },
+          {
+            trait_type: "Suffix",
+            value: "of Protection",
+          },
+          {
+            trait_type: "Name Prefix",
+            value: "Tempest",
+          },
+          {
+            trait_type: "Name Suffix",
+            value: "Grasp",
+          },
+          {
+            trait_type: "Augmentation",
+            value: "Yes",
+          },
+        ];
+        checkMetadata(
+          id,
+          attributes,
+          "'Tempest Grasp' Gloves of Protection +1"
+        );
+      });
+
+      it("Correct metadata for: Divine Robe", async () => {
+        const id = await LootItems.chestId(TOKEN_IDS.LOOT_TWO);
+        const attributes = [
+          {
+            trait_type: "Slot",
+            value: "Chest",
+          },
+        ];
+        checkMetadata(id, attributes, "Divine Robe");
+      });
+
+      it("Correct metadata for: Bronze Ring of Enlightenment", async () => {
+        const id = await LootItems.ringId(2169);
+        const attributes = [
+          {
+            trait_type: "Slot",
+            value: "Ring",
+          },
+          {
+            trait_type: "Suffix",
+            value: "of Enlightenment",
+          },
+        ];
+        checkMetadata(id, attributes, "Bronze Ring of Enlightenment");
+      });
+    });
+
+    // Just used as a pin on our code's functionality, maybe useless & should remove
     it("Expected token svg", async () => {
       const id = await LootItems.weaponId(TOKEN_IDS.LOOT_ONE);
       const meta = await LootItems.tokenURI(id);
-      // manually inspected to be "Katana" svg
       expect(meta).to.be.equal(
-        "data:application/json;base64,eyJuYW1lIjogIlNoZWV0ICMzMjc2ODAiLCAiZGVzY3JpcHRpb24iOiAiTG9vdCBUb2tlbnMgYXJlIGl0ZW1zIGV4dHJhY3RlZCBmcm9tIHRoZSBPRyBMb290IGJhZ3MuIEZlZWwgZnJlZSB0byB1c2UgTG9vdCBUb2tlbnMgaW4gYW55IHdheSB5b3Ugd2FudC4iLCAiaW1hZ2UiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhCeVpYTmxjblpsUVhOd1pXTjBVbUYwYVc4OUluaE5hVzVaVFdsdUlHMWxaWFFpSUhacFpYZENiM2c5SWpBZ01DQXpOVEFnTXpVd0lqNDhjM1I1YkdVK0xtSmhjMlVnZXlCbWFXeHNPaUIzYUdsMFpUc2dabTl1ZEMxbVlXMXBiSGs2SUhObGNtbG1PeUJtYjI1MExYTnBlbVU2SURFMGNIZzdJSDA4TDNOMGVXeGxQanh5WldOMElIZHBaSFJvUFNJeE1EQWxJaUJvWldsbmFIUTlJakV3TUNVaUlHWnBiR3c5SW1Kc1lXTnJJaUF2UGp4MFpYaDBJSGc5SWpFd0lpQjVQU0l5TUNJZ1kyeGhjM005SW1KaGMyVWlQa3RoZEdGdVlUd3ZkR1Y0ZEQ0OGRHVjRkQ0I0UFNJeE1DSWdlVDBpTkRBaUlHTnNZWE56UFNKaVlYTmxJajQ4TDNSbGVIUStQQzl6ZG1jKyJ9"
+        "data:application/json;base64,eyAibmFtZSI6ICJLYXRhbmEiLCAiZGVzY3JpcHRpb24iIDogIkxvb3QgVG9rZW5zIGFyZSBpdGVtcyBleHRyYWN0ZWQgZnJvbSB0aGUgT0cgTG9vdCBiYWdzLiBGZWVsIGZyZWUgdG8gdXNlIExvb3QgVG9rZW5zIGluIGFueSB3YXkgeW91IHdhbnQuIiwgImltYWdlIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIQnlaWE5sY25abFFYTndaV04wVW1GMGFXODlJbmhOYVc1WlRXbHVJRzFsWlhRaUlIWnBaWGRDYjNnOUlqQWdNQ0F6TlRBZ016VXdJajQ4YzNSNWJHVStMbUpoYzJVZ2V5Qm1hV3hzT2lCM2FHbDBaVHNnWm05dWRDMW1ZVzFwYkhrNklITmxjbWxtT3lCbWIyNTBMWE5wZW1VNklERTBjSGc3SUgwOEwzTjBlV3hsUGp4eVpXTjBJSGRwWkhSb1BTSXhNREFsSWlCb1pXbG5hSFE5SWpFd01DVWlJR1pwYkd3OUltSnNZV05ySWlBdlBqeDBaWGgwSUhnOUlqRXdJaUI1UFNJeU1DSWdZMnhoYzNNOUltSmhjMlVpUGt0aGRHRnVZVHd2ZEdWNGRENDhkR1Y0ZENCNFBTSXhNQ0lnZVQwaU5EQWlJR05zWVhOelBTSmlZWE5sSWo0OEwzUmxlSFErUEM5emRtYysiLCAiYXR0cmlidXRlcyI6IFt7InRyYWl0X3R5cGUiOiAiU2xvdCIsICJ2YWx1ZSI6ICJXZWFwb24ifV19"
       );
     });
   });

@@ -128,11 +128,11 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "Sheet #',
-                        toString(tokenId),
-                        '", "description": "Loot Tokens are items extracted from the OG Loot bags. Feel free to use Loot Tokens in any way you want.", "image": "data:image/svg+xml;base64,',
-                        Base64.encode(bytes(output)),
-                        '"}'
+                        '{ "name": "', tokenName(tokenId),'", ', 
+                        '"description" : ', '"Loot Tokens are items extracted from the OG Loot bags. Feel free to use Loot Tokens in any way you want.", ',
+                        '"image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '", ' 
+                        '"attributes": ', attributes(tokenId),
+                        '}'
                     )
                 )
             )
@@ -143,4 +143,41 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
 
         return output;
     }
+
+    function attributes(uint256 id) public view returns (string memory) {
+        (uint256[5] memory components, uint256 itemType) = TokenId.fromId(id);
+        // should we also use components[0] which contains the item name?
+        string memory slot = itemTypes[itemType];
+        string memory res = string(abi.encodePacked('[', trait("Slot", slot)));
+
+        if (components[1] > 0) {
+            string memory data = suffixes[components[1] - 1];
+            res = string(abi.encodePacked(res, ", ", trait("Suffix", data)));
+        }
+
+        if (components[2] > 0) {
+            string memory data = namePrefixes[components[2] - 1];
+            res = string(abi.encodePacked(res, ", ", trait("Name Prefix", data)));
+        }
+
+        if (components[3] > 0) {
+            string memory data = nameSuffixes[components[3] - 1];
+            res = string(abi.encodePacked(res, ", ", trait("Name Suffix", data)));
+        }
+
+        if (components[4] > 0) {
+            res = string(abi.encodePacked(res, ", ", trait("Augmentation", "Yes")));
+        }
+
+        res = string(abi.encodePacked(res, ']'));
+
+        return res;
+    }
+
+    function trait(string memory _traitType, string memory _value) internal pure returns (string memory) {
+        return string(abi.encodePacked('{',
+            '"trait_type": "', _traitType, '", ',
+            '"value": "', _value, '"',
+        '}'));
+      }
 }
