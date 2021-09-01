@@ -192,6 +192,30 @@
   {
     "inputs": [
       {
+        "internalType": "uint256[5]",
+        "name": "components",
+        "type": "uint256[5]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "itemType",
+        "type": "uint256"
+      }
+    ],
+    "name": "componentsToString",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -249,30 +273,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256[5]",
-        "name": "components",
-        "type": "uint256[5]"
-      },
-      {
-        "internalType": "string",
-        "name": "salt",
-        "type": "string"
-      }
-    ],
-    "name": "idFromComponents",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -323,7 +323,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct LootItems.ItemIds",
+        "internalType": "struct LootTokensMetadata.ItemIds",
         "name": "",
         "type": "tuple"
       }
@@ -350,6 +350,67 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "names",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "weapon",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "chest",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "head",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "waist",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "foot",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "hand",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "neck",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "ring",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct LootTokensMetadata.ItemNames",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -416,7 +477,20 @@
         "type": "uint256"
       }
     ],
-    "name": "recover",
+    "name": "open",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "reassemble",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -527,19 +601,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "split",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"
@@ -551,6 +612,44 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenName",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",

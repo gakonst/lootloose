@@ -12,14 +12,26 @@ const ALCHEMY_API_KEY: string = process.env.ALCHEMY_API_KEY ?? "";
 
 // Export Hardhat params
 export default {
-  // Soldity ^0.8.0
-  solidity: "0.8.4",
   networks: {
     // Fork mainnet for testing
     hardhat: {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
         blockNumber: 13135486,
+      },
+    },
+  },
+  solidity: {
+    version: '0.8.4',
+    settings: {
+      optimizer: { enabled: true, runs: 200 },
+      metadata: {
+        bytecodeHash: 'none',
+      },
+      outputSelection: {
+        '*': {
+          '*': ['storageLayout'],
+        },
       },
     },
   },

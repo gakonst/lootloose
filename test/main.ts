@@ -1,11 +1,7 @@
 import { expect } from "chai"; // Testing
-import { BigNumber, Contract, Signer, Transaction } from "ethers"; // Ethers
-import { ethers, waffle, network } from "hardhat"; // Hardhat
+import { BigNumber, Contract, Signer } from "ethers"; // Ethers
+import { ethers, network } from "hardhat"; // Hardhat
 const LootABI = require("./abi/loot.json");
-
-// Potential revert error messages
-// const ERROR_MESSAGES: Record<string, Record<string, string>> = {
-// };
 
 // Setup global contracts
 let LootItems: Contract;
@@ -38,7 +34,7 @@ async function impersonateSigner(account: string): Promise<Signer> {
 }
 
 async function deploy(): Promise<void> {
-  const LootItemsFactory = await ethers.getContractFactory("LootItems");
+  const LootItemsFactory = await ethers.getContractFactory("LootTokens");
   const contract = await LootItemsFactory.deploy();
   await contract.deployed();
 
@@ -61,7 +57,7 @@ async function approve(): Promise<void> {
   await loot.connect(robe2).approve(LootItemsAddress, TOKEN_IDS.LOOT_TWO);
 }
 
-describe("LootItems", () => {
+describe("LootTokens", () => {
   let divineRobeId: BigNumber;
 
   // Pre-setup
@@ -84,21 +80,62 @@ describe("LootItems", () => {
 
     await approve();
 
-    divineRobeId = await LootItems.chestId(TOKEN_IDS.DIVINE_ROBE_ONE);
+    divineRobeId = await LootItems.chestId(TOKEN_IDS.LOOT_ONE);
   });
 
   describe("User can split and re-unify their tokens", () => {
-    it("Should split a bag into its components and use them as erc1155s", async () => {
+    it("Tokens have expected names", async () => {
+      const checkNames = (names: any, expected: any) => {
+        expect(names.weapon).to.be.equal(expected.weapon);
+        expect(names.chest).to.be.equal(expected.chest);
+        expect(names.head).to.be.equal(expected.head);
+        expect(names.waist).to.be.equal(expected.waist);
+        expect(names.foot).to.be.equal(expected.foot);
+        expect(names.neck).to.be.equal(expected.neck);
+        expect(names.ring).to.be.equal(expected.ring);
+      };
+
+      expect(await LootItems.tokenName(divineRobeId)).to.be.equal(
+        "Divine Robe"
+      );
+      const names = await LootItems.names(TOKEN_IDS.LOOT_TWO);
+      let expected = {
+        weapon: "Falchion of Fury",
+        chest: "Divine Robe",
+        head: "Great Helm",
+        waist: '"Grim Peak" Sash of Enlightenment +1',
+        foot: "Linen Shoes of Titans",
+        hand: '"Tempest Grasp" Gloves of Protection +1',
+        neck: "Necklace of Protection",
+        ring: "Bronze Ring",
+      };
+      checkNames(names, expected);
+
+      const names2 = await LootItems.names(TOKEN_IDS.LOOT_ONE);
+      expected = {
+        weapon: "Katana",
+        chest: "Divine Robe",
+        head: "Great Helm",
+        waist: "Wool Sash",
+        foot: "Divine Slippers",
+        hand: "Chain Gloves",
+        neck: "Amulet",
+        ring: "Gold Ring",
+      };
+      checkNames(names2, expected);
+    });
+
+    it("Should open a bag", async () => {
       const robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
-      await LootItems.connect(robe1).split(TOKEN_IDS.LOOT_ONE);
+      await LootItems.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
 
       const robe2 = await impersonateSigner(ADDRESSES.OWNER_LOOT_TWO);
-      await LootItems.connect(robe2).split(TOKEN_IDS.LOOT_TWO);
+      await LootItems.connect(robe2).open(TOKEN_IDS.LOOT_TWO);
 
       // transfer the 1155 to the owner
       await LootItems.connect(robe2).safeTransferFrom(
-        ADDRESSES.OWNER_LOOT_ONE,
         ADDRESSES.OWNER_LOOT_TWO,
+        ADDRESSES.OWNER_LOOT_ONE,
         divineRobeId,
         1,
         "0x"
@@ -109,11 +146,11 @@ describe("LootItems", () => {
       ).to.be.equal(2);
     });
 
-    it("Can recombine a split bag into its 721 NFT", async () => {
+    it("Can reassemble an opened bag into its 721 NFT", async () => {
       const loot = await getLootContract(ADDRESSES.OWNER_LOOT_ONE);
       const robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
-      await LootItems.connect(robe1).split(TOKEN_IDS.DIVINE_ROBE_ONE);
-      expect(await loot.ownerOf(TOKEN_IDS.DIVINE_ROBE_ONE)).to.be.equal(
+      await LootItems.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
+      expect(await loot.ownerOf(TOKEN_IDS.LOOT_ONE)).to.be.equal(
         LootItemsAddress
       );
 
@@ -121,7 +158,7 @@ describe("LootItems", () => {
       await LootItems.setApprovalForAll(LootItemsAddress, true);
 
       // do the recovery
-      await LootItems.connect(robe1).recover(TOKEN_IDS.DIVINE_ROBE_ONE);
+      await LootItems.connect(robe1).reassemble(TOKEN_IDS.LOOT_ONE);
 
       // we no longer own the divine robe 1155
       expect(
@@ -131,6 +168,15 @@ describe("LootItems", () => {
       // but we now re-own the lootbox
       expect(await loot.ownerOf(TOKEN_IDS.LOOT_ONE)).to.be.equal(
         ADDRESSES.OWNER_LOOT_ONE
+      );
+    });
+
+    it("Expected token svg", async () => {
+      const id = await LootItems.weaponId(TOKEN_IDS.LOOT_ONE);
+      const meta = await LootItems.tokenURI(id);
+      // manually inspected to be "Katana" svg
+      expect(meta).to.be.equal(
+        "data:application/json;base64,eyJuYW1lIjogIlNoZWV0ICMzMjc2ODAiLCAiZGVzY3JpcHRpb24iOiAiTG9vdCBUb2tlbnMgYXJlIGl0ZW1zIGV4dHJhY3RlZCBmcm9tIHRoZSBPRyBMb290IGJhZ3MuIEZlZWwgZnJlZSB0byB1c2UgTG9vdCBUb2tlbnMgaW4gYW55IHdheSB5b3Ugd2FudC4iLCAiaW1hZ2UiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhCeVpYTmxjblpsUVhOd1pXTjBVbUYwYVc4OUluaE5hVzVaVFdsdUlHMWxaWFFpSUhacFpYZENiM2c5SWpBZ01DQXpOVEFnTXpVd0lqNDhjM1I1YkdVK0xtSmhjMlVnZXlCbWFXeHNPaUIzYUdsMFpUc2dabTl1ZEMxbVlXMXBiSGs2SUhObGNtbG1PeUJtYjI1MExYTnBlbVU2SURFMGNIZzdJSDA4TDNOMGVXeGxQanh5WldOMElIZHBaSFJvUFNJeE1EQWxJaUJvWldsbmFIUTlJakV3TUNVaUlHWnBiR3c5SW1Kc1lXTnJJaUF2UGp4MFpYaDBJSGc5SWpFd0lpQjVQU0l5TUNJZ1kyeGhjM005SW1KaGMyVWlQa3RoZEdGdVlUd3ZkR1Y0ZEQ0OGRHVjRkQ0I0UFNJeE1DSWdlVDBpTkRBaUlHTnNZWE56UFNKaVlYTmxJajQ4TDNSbGVIUStQQzl6ZG1jKyJ9"
       );
     });
   });

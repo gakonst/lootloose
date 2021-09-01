@@ -1,0 +1,132 @@
+//SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity ^0.8.0;
+
+// ============ Imports ============
+
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+
+import "./LootTokensMetadata.sol";
+import {Base64, toString} from "./MetadataUtils.sol";
+
+/// @title Loot Tokens
+/// @author Georgios Konstantopoulos
+/// @notice Allows "opening" your ERC721 Loot bags and extracting the items inside it
+/// The created tokens are ERC1155 compatible, and their on-chain SVG is their name
+contract LootTokens is ERC1155, LootTokensMetadata {
+    // The OG Loot bags contract
+    IERC721 constant loot = IERC721(0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7);
+
+    // No need for a URI since we're doing everything onchain
+    constructor() ERC1155("") {}
+
+    /// @notice Opens your Loot bag and mints you 8 ERC-1155 tokens for each item
+    /// in that bag
+    function open(uint256 tokenId) external {
+        // 1. get the bag
+        loot.safeTransferFrom(msg.sender, address(this), tokenId);
+
+        // 2. mint the items
+        mintItem(tokenId, weaponComponents, WEAPON);
+        mintItem(tokenId, chestComponents, CHEST);
+        mintItem(tokenId, headComponents, HEAD);
+        mintItem(tokenId, waistComponents, WAIST);
+        mintItem(tokenId, footComponents, FOOT);
+        mintItem(tokenId, handComponents, HAND);
+        mintItem(tokenId, neckComponents, NECK);
+        mintItem(tokenId, ringComponents, RING);
+    }
+
+    /// @notice Re-assembles the original Loot bag by burning all the ERC1155 tokens
+    /// which were inside of it. Because ERC1155 tokens are fungible, you can give it
+    /// any token that matches the one that was originally in it (i.e. you don't need to
+    /// give it the exact e.g. Divine Robe that was created during minting.
+    function reassemble(uint256 tokenId) external {
+        // 1. burn the items
+        burnItem(tokenId, weaponComponents, WEAPON);
+        burnItem(tokenId, chestComponents, CHEST);
+        burnItem(tokenId, headComponents, HEAD);
+        burnItem(tokenId, waistComponents, WAIST);
+        burnItem(tokenId, footComponents, FOOT);
+        burnItem(tokenId, handComponents, HAND);
+        burnItem(tokenId, neckComponents, NECK);
+        burnItem(tokenId, ringComponents, RING);
+
+        // 2. give back the bag
+        loot.safeTransferFrom(address(this), msg.sender, tokenId);
+    }
+
+    /// @notice Extracts the components associated with the ERC721 Loot bag using
+    /// dhof's LootComponents utils and proceeds to mint a token for the corresponding
+    /// token id to the msg.sender.
+    function mintItem(
+        uint256 tokenId,
+        function(uint256) view returns (uint256[5] memory) componentsFn,
+        uint256 itemType
+    ) private {
+        uint256[5] memory components = componentsFn(tokenId);
+        uint256 id = TokenId.toId(components, itemType);
+        _mint(msg.sender, id, 1, "");
+    }
+
+    /// @notice Extracts the components associated with the ERC721 Loot bag using
+    /// dhof's LootComponents utils and proceeds to burn a token for the corresponding
+    /// item from the msg.sender.
+    function burnItem(
+        uint256 tokenId,
+        function(uint256) view returns (uint256[5] memory) componentsFn,
+        uint256 itemType
+    ) private {
+        uint256[5] memory components = componentsFn(tokenId);
+        uint256 id = TokenId.toId(components, itemType);
+        _burn(msg.sender, id, 1);
+    }
+
+    /// @notice Returns an SVG for the provided token id that
+    function tokenURI(uint256 tokenId) public view returns (string memory) {
+        string[4] memory parts;
+        parts[
+            0
+        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
+
+        parts[1] = tokenName(tokenId);
+
+        parts[2] = '</text><text x="10" y="40" class="base">';
+
+        parts[3] = "</text></svg>";
+
+        string memory output = string(
+            abi.encodePacked(parts[0], parts[1], parts[2], parts[3])
+        );
+
+        string memory json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name": "Sheet #',
+                        toString(tokenId),
+                        // TODO
+                        '", "description": "Loot Tokens are items extracted from the OG Loot bags. Feel free to use Loot Tokens in any way you want.", "image": "data:image/svg+xml;base64,',
+                        Base64.encode(bytes(output)),
+                        '"}'
+                    )
+                )
+            )
+        );
+        output = string(
+            abi.encodePacked("data:application/json;base64,", json)
+        );
+
+        return output;
+    }
+
+    // accept nfts - boilerplate
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure returns (bytes4) {
+        return LootTokens.onERC721Received.selector;
+    }
+}

@@ -30,7 +30,7 @@
 pragma solidity ^0.8.4;
 
 contract LootComponents {
-    string[] private weapons = [
+    string[] internal weapons = [
         "Warhammer", // 0
         "Quarterstaff", // 1
         "Maul", // 2
@@ -51,7 +51,7 @@ contract LootComponents {
         "Book" // 17
     ];
 
-    string[] private chestArmor = [
+    string[] internal chestArmor = [
         "Divine Robe", // 0
         "Silk Robe", // 1
         "Linen Robe", // 2
@@ -69,7 +69,7 @@ contract LootComponents {
         "Ring Mail" // 14
     ];
 
-    string[] private headArmor = [
+    string[] internal headArmor = [
         "Ancient Helm", // 0
         "Ornate Helm", // 1
         "Great Helm", // 2
@@ -87,7 +87,7 @@ contract LootComponents {
         "Hood" // 14
     ];
 
-    string[] private waistArmor = [
+    string[] internal waistArmor = [
         "Ornate Belt", // 0
         "War Belt", // 1
         "Plated Belt", // 2
@@ -105,7 +105,7 @@ contract LootComponents {
         "Sash" // 14
     ];
 
-    string[] private footArmor = [
+    string[] internal footArmor = [
         "Holy Greaves", // 0
         "Ornate Greaves", // 1
         "Greaves", // 2
@@ -123,7 +123,7 @@ contract LootComponents {
         "Shoes" // 14
     ];
 
-    string[] private handArmor = [
+    string[] internal handArmor = [
         "Holy Gauntlets", // 0
         "Ornate Gauntlets", // 1
         "Gauntlets", // 2
@@ -141,13 +141,13 @@ contract LootComponents {
         "Gloves" // 14
     ];
 
-    string[] private necklaces = [
+    string[] internal necklaces = [
         "Necklace", // 0
         "Amulet", // 1
         "Pendant" // 2
     ];
 
-    string[] private rings = [
+    string[] internal rings = [
         "Gold Ring", // 0
         "Silver Ring", // 1
         "Bronze Ring", // 2
@@ -155,7 +155,7 @@ contract LootComponents {
         "Titanium Ring" // 4
     ];
 
-    string[] private suffixes = [
+    string[] internal suffixes = [
         // <no suffix>          // 0
         "of Power", // 1
         "of Giants", // 2
@@ -175,7 +175,7 @@ contract LootComponents {
         "of the Twins" // 16
     ];
 
-    string[] private namePrefixes = [
+    string[] internal namePrefixes = [
         // <no name>            // 0
         "Agony", // 1
         "Apocalypse", // 2
@@ -248,7 +248,7 @@ contract LootComponents {
         "Shimmering" // 69
     ];
 
-    string[] private nameSuffixes = [
+    string[] internal nameSuffixes = [
         // <no name>            // 0
         "Bane", // 1
         "Root", // 2
