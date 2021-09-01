@@ -353,7 +353,7 @@ contract LootComponents {
         uint256 tokenId,
         string memory keyPrefix,
         uint256 sourceArrayLength
-    ) internal view returns (uint256[5] memory) {
+    ) internal pure returns (uint256[5] memory) {
         uint256[5] memory components;
 
         uint256 rand = random(
@@ -383,7 +383,7 @@ contract LootComponents {
 
     // TODO: This costs 2.5k gas per invocation. We call it a lot when minting.
     // How can this be improved?
-    function toString(uint256 value) internal view returns (string memory) {
+    function toString(uint256 value) internal pure returns (string memory) {
         // Inspired by OraclizeAPI's implementation - MIT license
         // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol
 
