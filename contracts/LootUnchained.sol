@@ -150,6 +150,9 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
         string memory slot = itemTypes[itemType];
         string memory res = string(abi.encodePacked('[', trait("Slot", slot)));
 
+        string memory item = itemName(itemType, components[0]);
+        res = string(abi.encodePacked(res, ", ", trait("Item", item)));
+
         if (components[1] > 0) {
             string memory data = suffixes[components[1] - 1];
             res = string(abi.encodePacked(res, ", ", trait("Suffix", data)));

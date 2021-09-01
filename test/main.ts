@@ -207,6 +207,10 @@ describe("LootTokens", () => {
             value: "Hand",
           },
           {
+            trait_type: "Item",
+            value: "Gloves",
+          },
+          {
             trait_type: "Suffix",
             value: "of Protection",
           },
@@ -237,6 +241,10 @@ describe("LootTokens", () => {
             trait_type: "Slot",
             value: "Chest",
           },
+          {
+            trait_type: "Item",
+            value: "Divine Robe",
+          },
         ];
         checkMetadata(id, attributes, "Divine Robe");
       });
@@ -249,21 +257,16 @@ describe("LootTokens", () => {
             value: "Ring",
           },
           {
+            trait_type: "Item",
+            value: "Bronze Ring",
+          },
+          {
             trait_type: "Suffix",
             value: "of Enlightenment",
           },
         ];
         checkMetadata(id, attributes, "Bronze Ring of Enlightenment");
       });
-    });
-
-    // Just used as a pin on our code's functionality, maybe useless & should remove
-    it("Expected token svg", async () => {
-      const id = await LootItems.weaponId(TOKEN_IDS.LOOT_ONE);
-      const meta = await LootItems.tokenURI(id);
-      expect(meta).to.be.equal(
-        "data:application/json;base64,eyAibmFtZSI6ICJLYXRhbmEiLCAiZGVzY3JpcHRpb24iIDogIkxvb3QgVG9rZW5zIGFyZSBpdGVtcyBleHRyYWN0ZWQgZnJvbSB0aGUgT0cgTG9vdCBiYWdzLiBGZWVsIGZyZWUgdG8gdXNlIExvb3QgVG9rZW5zIGluIGFueSB3YXkgeW91IHdhbnQuIiwgImltYWdlIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIQnlaWE5sY25abFFYTndaV04wVW1GMGFXODlJbmhOYVc1WlRXbHVJRzFsWlhRaUlIWnBaWGRDYjNnOUlqQWdNQ0F6TlRBZ016VXdJajQ4YzNSNWJHVStMbUpoYzJVZ2V5Qm1hV3hzT2lCM2FHbDBaVHNnWm05dWRDMW1ZVzFwYkhrNklITmxjbWxtT3lCbWIyNTBMWE5wZW1VNklERTBjSGc3SUgwOEwzTjBlV3hsUGp4eVpXTjBJSGRwWkhSb1BTSXhNREFsSWlCb1pXbG5hSFE5SWpFd01DVWlJR1pwYkd3OUltSnNZV05ySWlBdlBqeDBaWGgwSUhnOUlqRXdJaUI1UFNJeU1DSWdZMnhoYzNNOUltSmhjMlVpUGt0aGRHRnVZVHd2ZEdWNGRENDhkR1Y0ZENCNFBTSXhNQ0lnZVQwaU5EQWlJR05zWVhOelBTSmlZWE5sSWo0OEwzUmxlSFErUEM5emRtYysiLCAiYXR0cmlidXRlcyI6IFt7InRyYWl0X3R5cGUiOiAiU2xvdCIsICJ2YWx1ZSI6ICJXZWFwb24ifV19"
-      );
     });
   });
 });

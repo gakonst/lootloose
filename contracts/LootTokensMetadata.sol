@@ -56,12 +56,8 @@ contract LootTokensMetadata is LootComponents {
         return componentsToString(components, itemType);
     }
 
-    // Creates the token description given its components and what type it is
-    function componentsToString(uint256[5] memory components, uint256 itemType)
-        public
-        view
-        returns (string memory)
-    {
+    // Returns the "vanilla" item name w/o any prefix/suffixes or augmentations
+    function itemName(uint256 itemType, uint256 idx) public view returns (string memory) {
         string[] storage arr;
         if (itemType == WEAPON) {
             arr = weapons;
@@ -83,7 +79,18 @@ contract LootTokensMetadata is LootComponents {
             revert("Unexpected armor piece");
         }
 
-        string memory item = arr[components[0]];
+        return arr[idx];
+    }
+
+    // Creates the token description given its components and what type it is
+    function componentsToString(uint256[5] memory components, uint256 itemType)
+        public
+        view
+        returns (string memory)
+    {
+        // item type: what slot to get
+        // components[0] the index in the array
+        string memory item = itemName(itemType, components[0]);
 
         // We need to do -1 because the 'no description' is not part of loot copmonents
 
