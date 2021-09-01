@@ -125,7 +125,7 @@ describe("LootTokens", () => {
       checkNames(names2, expected);
     });
 
-    it("Should open a bag", async () => {
+    it("Should open a bag w/ approve + transferfrom pattern", async () => {
       const robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
       await LootItems.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
 
@@ -144,6 +144,18 @@ describe("LootTokens", () => {
       expect(
         await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
       ).to.be.equal(2);
+    });
+
+    it.only("Should open a bag w/ simple transfer", async () => {
+      const loot = await getLootContract(ADDRESSES.OWNER_LOOT_ONE);
+      await loot.functions["safeTransferFrom(address,address,uint256)"](
+        ADDRESSES.OWNER_LOOT_ONE,
+        LootItemsAddress,
+        TOKEN_IDS.LOOT_ONE
+      );
+      expect(
+        await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+      ).to.be.equal(1);
     });
 
     it("Can reassemble an opened bag into its 721 NFT", async () => {

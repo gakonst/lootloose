@@ -20,13 +20,18 @@ contract LootTokens is ERC1155, LootTokensMetadata {
     // No need for a URI since we're doing everything onchain
     constructor() ERC1155("") {}
 
+    /// @notice Transfers the erc721 bag from your account to the contract and then
+    /// opens it. Use it if you have already approved the transfer, else consider
+    /// just transferring directly to the contract and letting the `onERC721Received`
+    /// do its part
+    function open(uint256 tokenId) public {
+        loot.safeTransferFrom(msg.sender, address(this), tokenId);
+        open(msg.sender, tokenId);
+    }
+
     /// @notice Opens your Loot bag and mints you 8 ERC-1155 tokens for each item
     /// in that bag
-    function open(uint256 tokenId) external {
-        // 1. get the bag
-        loot.safeTransferFrom(msg.sender, address(this), tokenId);
-
-        // 2. mint the items
+    function open(address who, uint256 tokenId) private {
         // NB: We patched ERC1155 to expose `_balances` so
         // that we can manually mint to a user, and manually emit a `TransferBatch`
         // event. If that is unsafe, we could alternatively use the following which
@@ -51,11 +56,11 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         ids[7] = itemId(tokenId, ringComponents, RING);
         for (uint256 i = 0; i < ids.length; i++) {
             amounts[i] = 1;
-            // +21k per call / unavoidable
-            _balances[ids[i]][msg.sender] += 1;
+            // +21k per call / unavoidable - requires patching OZ
+            _balances[ids[i]][who] += 1;
         }
 
-        emit TransferBatch(msg.sender, address(0), msg.sender, ids, amounts);
+        emit TransferBatch(_msgSender(), address(0), who, ids, amounts);
     }
 
     /// @notice Re-assembles the original Loot bag by burning all the ERC1155 tokens
@@ -150,13 +155,17 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         return output;
     }
 
-    // accept nfts - boilerplate
     function onERC721Received(
+        // sender of the tx
         address,
-        address,
-        uint256,
+        // the user that sent in the nft
+        address from,
+        uint256 tokenId,
         bytes calldata
-    ) external pure returns (bytes4) {
+    ) external returns (bytes4) {
+        // only supports callback from the Loot contract
+        require(msg.sender == address(loot));
+        open(from, tokenId);
         return LootTokens.onERC721Received.selector;
     }
 }
