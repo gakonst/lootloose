@@ -31,5 +31,7 @@ yarn test
 
 ### Security Notes
 
-In order to improve gas efficiency, OZ's ERC1155.sol was patched to expose the `_balances`
+* In order to improve gas efficiency, OZ's ERC1155.sol was patched to expose the `_balances`
 mapping. We use that to do a batch mint inside `open`.
+* Dom's original [LootComponents](https://twitter.com/dhof/status/1432403895008088064) was modified
+to be cheaper to use, since it did a lot of redundant `SLOAD`s in hot code paths.
