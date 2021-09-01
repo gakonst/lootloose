@@ -1,10 +1,8 @@
 import * as dotenv from "dotenv"; // Env
-import "@nomiclabs/hardhat-waffle"; // Hardhat
 
 // Hardhat plugins
 import "hardhat-gas-reporter"; // Gas stats
 import "hardhat-abi-exporter"; // ABI exports
-import "@nomiclabs/hardhat-solhint"; // Solhint
 
 // Setup env
 dotenv.config();

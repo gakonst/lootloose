@@ -28,3 +28,8 @@ yarn compile
 # Run tests
 yarn test
 ```
+
+### Security Notes
+
+In order to improve gas efficiency, OZ's ERC1155.sol was patched to expose the `_balances`
+mapping. We use that to do a batch mint inside `open`.
