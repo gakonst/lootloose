@@ -366,11 +366,11 @@ contract LootComponents {
 
         uint256 greatness = rand % 21;
         if (greatness > 14) {
-            components[1] = (rand % suffixes.length) + 1;
+            components[1] = (rand % suffixesLength) + 1;
         }
         if (greatness >= 19) {
-            components[2] = (rand % namePrefixes.length) + 1;
-            components[3] = (rand % nameSuffixes.length) + 1;
+            components[2] = (rand % namePrefixesLength) + 1;
+            components[3] = (rand % nameSuffixesLength) + 1;
             if (greatness == 19) {
                 // ...
             } else {
