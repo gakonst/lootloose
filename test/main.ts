@@ -34,7 +34,7 @@ async function impersonateSigner(account: string): Promise<Signer> {
 }
 
 async function deploy(): Promise<void> {
-  const LootItemsFactory = await ethers.getContractFactory("LootTokens");
+  const LootItemsFactory = await ethers.getContractFactory("LootUnchained");
   const contract = await LootItemsFactory.deploy();
   await contract.deployed();
 

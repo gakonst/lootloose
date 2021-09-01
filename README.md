@@ -16,6 +16,8 @@ You can mint the 8 ERC-1155 tokens via 2 ways:
 1. `approve` the `LootUnchained.sol` contract to spend your NFT (or via `setApprovalForAll`)
 2. Transferring your NFT directly to the contract, triggerring the `onERC721Received` callback
 
+Average gas cost to `open` is 322k gas, to `reassemble` 165k.
+
 ## Run locally
 
 ```bash

@@ -9,12 +9,11 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "./LootTokensMetadata.sol";
 import {Base64, toString} from "./MetadataUtils.sol";
 
-import "hardhat/console.sol";
 /// @title Loot Tokens
 /// @author Georgios Konstantopoulos
 /// @notice Allows "opening" your ERC721 Loot bags and extracting the items inside it
 /// The created tokens are ERC1155 compatible, and their on-chain SVG is their name
-contract LootTokens is ERC1155, LootTokensMetadata {
+contract LootUnchained is ERC1155, LootTokensMetadata {
     // The OG Loot bags contract
     IERC721 constant loot = IERC721(0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7);
 
@@ -39,7 +38,7 @@ contract LootTokens is ERC1155, LootTokensMetadata {
         // only supports callback from the Loot contract
         require(msg.sender == address(loot));
         open(from, tokenId);
-        return LootTokens.onERC721Received.selector;
+        return LootUnchained.onERC721Received.selector;
     }
 
     /// @notice Opens your Loot bag and mints you 8 ERC-1155 tokens for each item
@@ -131,7 +130,6 @@ contract LootTokens is ERC1155, LootTokensMetadata {
                     abi.encodePacked(
                         '{"name": "Sheet #',
                         toString(tokenId),
-                        // TODO
                         '", "description": "Loot Tokens are items extracted from the OG Loot bags. Feel free to use Loot Tokens in any way you want.", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(output)),
                         '"}'
