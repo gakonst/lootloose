@@ -158,6 +158,86 @@ describe("LootLoose", () => {
     });
   });
 
+  describe("Opensea-compliant metadata", async () => {
+    const checkMetadata = async (id: any, attributes: any, name: string) => {
+      let meta = await LootLoose.tokenURI(id);
+      meta = meta.replace("data:application/json;base64,", "");
+      meta = new Buffer(meta, "base64").toString();
+      meta = JSON.parse(meta);
+      expect(meta.name).to.be.deep.equal(name);
+      expect(meta.attributes).to.be.deep.equal(attributes);
+    };
+
+    it("Correct metadata for: 'Tempest Grasp' Gloves of Protection +1", async () => {
+      const id = await LootLoose.handId(TOKEN_IDS.LOOT_TWO);
+      const attributes = [
+        {
+          trait_type: "Slot",
+          value: "Hand",
+        },
+        {
+          trait_type: "Item",
+          value: "Gloves",
+        },
+        {
+          trait_type: "Suffix",
+          value: "of Protection",
+        },
+        {
+          trait_type: "Name Prefix",
+          value: "Tempest",
+        },
+        {
+          trait_type: "Name Suffix",
+          value: "Grasp",
+        },
+        {
+          trait_type: "Augmentation",
+          value: "Yes",
+        },
+      ];
+      checkMetadata(
+        id,
+        attributes,
+        "'Tempest Grasp' Gloves of Protection +1"
+      );
+    });
+
+    it("Correct metadata for: Divine Robe", async () => {
+      const id = await LootLoose.chestId(TOKEN_IDS.LOOT_TWO);
+      const attributes = [
+        {
+          trait_type: "Slot",
+          value: "Chest",
+        },
+        {
+          trait_type: "Item",
+          value: "Divine Robe",
+        },
+      ];
+      checkMetadata(id, attributes, "Divine Robe");
+    });
+
+    it("Correct metadata for: Bronze Ring of Enlightenment", async () => {
+      const id = await LootLoose.ringId(2169);
+      const attributes = [
+        {
+          trait_type: "Slot",
+          value: "Ring",
+        },
+        {
+          trait_type: "Item",
+          value: "Bronze Ring",
+        },
+        {
+          trait_type: "Suffix",
+          value: "of Enlightenment",
+        },
+      ];
+      checkMetadata(id, attributes, "Bronze Ring of Enlightenment");
+    });
+  });
+
   describe("User can split and re-unify their tokens", () => {
     it("Tokens have expected names", async () => {
       const checkNames = (names: any, expected: any) => {
@@ -264,84 +344,5 @@ describe("LootLoose", () => {
       );
     });
 
-    describe("Opensea-compliant metadata", async () => {
-      const checkMetadata = async (id: any, attributes: any, name: string) => {
-        let meta = await LootLoose.tokenURI(id);
-        meta = meta.replace("data:application/json;base64,", "");
-        meta = new Buffer(meta, "base64").toString();
-        meta = JSON.parse(meta);
-        expect(meta.name).to.be.deep.equal(name);
-        expect(meta.attributes).to.be.deep.equal(attributes);
-      };
-
-      it("Correct metadata for: 'Tempest Grasp' Gloves of Protection +1", async () => {
-        const id = await LootLoose.handId(TOKEN_IDS.LOOT_TWO);
-        const attributes = [
-          {
-            trait_type: "Slot",
-            value: "Hand",
-          },
-          {
-            trait_type: "Item",
-            value: "Gloves",
-          },
-          {
-            trait_type: "Suffix",
-            value: "of Protection",
-          },
-          {
-            trait_type: "Name Prefix",
-            value: "Tempest",
-          },
-          {
-            trait_type: "Name Suffix",
-            value: "Grasp",
-          },
-          {
-            trait_type: "Augmentation",
-            value: "Yes",
-          },
-        ];
-        checkMetadata(
-          id,
-          attributes,
-          "'Tempest Grasp' Gloves of Protection +1"
-        );
-      });
-
-      it("Correct metadata for: Divine Robe", async () => {
-        const id = await LootLoose.chestId(TOKEN_IDS.LOOT_TWO);
-        const attributes = [
-          {
-            trait_type: "Slot",
-            value: "Chest",
-          },
-          {
-            trait_type: "Item",
-            value: "Divine Robe",
-          },
-        ];
-        checkMetadata(id, attributes, "Divine Robe");
-      });
-
-      it("Correct metadata for: Bronze Ring of Enlightenment", async () => {
-        const id = await LootLoose.ringId(2169);
-        const attributes = [
-          {
-            trait_type: "Slot",
-            value: "Ring",
-          },
-          {
-            trait_type: "Item",
-            value: "Bronze Ring",
-          },
-          {
-            trait_type: "Suffix",
-            value: "of Enlightenment",
-          },
-        ];
-        checkMetadata(id, attributes, "Bronze Ring of Enlightenment");
-      });
-    });
   });
 });
