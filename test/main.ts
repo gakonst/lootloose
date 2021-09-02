@@ -4,8 +4,8 @@ import { ethers, network } from "hardhat"; // Hardhat
 const LootABI = require("./abi/loot.json");
 
 // Setup global contracts
-let LootItems: Contract;
-let LootItemsAddress: string;
+let LootLoose: Contract;
+let LootLooseAddress: string;
 
 const ADDRESSES: Record<string, string> = {
   // https://opensea.io/0x3fae7d59a245527fc09f2c274e18a3834e027708
@@ -34,12 +34,12 @@ async function impersonateSigner(account: string): Promise<Signer> {
 }
 
 async function deploy(): Promise<void> {
-  const LootItemsFactory = await ethers.getContractFactory("LootUnchained");
-  const contract = await LootItemsFactory.deploy();
+  const LootLooseFactory = await ethers.getContractFactory("LootLoose");
+  const contract = await LootLooseFactory.deploy();
   await contract.deployed();
 
-  LootItems = contract;
-  LootItemsAddress = contract.address.toString();
+  LootLoose = contract;
+  LootLooseAddress = contract.address.toString();
 }
 
 async function getLootContract(address: string): Promise<Contract> {
@@ -51,13 +51,13 @@ async function getLootContract(address: string): Promise<Contract> {
 
 async function approve(): Promise<void> {
   const loot = await getLootContract(ADDRESSES.OWNER_LOOT_ONE);
-  await loot.approve(LootItemsAddress, TOKEN_IDS.LOOT_ONE);
+  await loot.approve(LootLooseAddress, TOKEN_IDS.LOOT_ONE);
 
   const robe2 = await impersonateSigner(ADDRESSES.OWNER_LOOT_TWO);
-  await loot.connect(robe2).approve(LootItemsAddress, TOKEN_IDS.LOOT_TWO);
+  await loot.connect(robe2).approve(LootLooseAddress, TOKEN_IDS.LOOT_TWO);
 }
 
-describe("LootTokens", () => {
+describe("LootLoose", () => {
   let divineRobeId: BigNumber;
 
   // Pre-setup
@@ -80,7 +80,7 @@ describe("LootTokens", () => {
 
     await approve();
 
-    divineRobeId = await LootItems.chestId(TOKEN_IDS.LOOT_ONE);
+    divineRobeId = await LootLoose.chestId(TOKEN_IDS.LOOT_ONE);
   });
 
   describe("User can split and re-unify their tokens", () => {
@@ -95,10 +95,10 @@ describe("LootTokens", () => {
         expect(names.ring).to.be.equal(expected.ring);
       };
 
-      expect(await LootItems.tokenName(divineRobeId)).to.be.equal(
+      expect(await LootLoose.tokenName(divineRobeId)).to.be.equal(
         "Divine Robe"
       );
-      const names = await LootItems.names(TOKEN_IDS.LOOT_TWO);
+      const names = await LootLoose.names(TOKEN_IDS.LOOT_TWO);
       let expected = {
         weapon: "Falchion of Fury",
         chest: "Divine Robe",
@@ -111,7 +111,7 @@ describe("LootTokens", () => {
       };
       checkNames(names, expected);
 
-      const names2 = await LootItems.names(TOKEN_IDS.LOOT_ONE);
+      const names2 = await LootLoose.names(TOKEN_IDS.LOOT_ONE);
       expected = {
         weapon: "Katana",
         chest: "Divine Robe",
@@ -127,13 +127,13 @@ describe("LootTokens", () => {
 
     it("Should open a bag w/ approve + transferfrom pattern", async () => {
       const robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
-      await LootItems.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
+      await LootLoose.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
 
       const robe2 = await impersonateSigner(ADDRESSES.OWNER_LOOT_TWO);
-      await LootItems.connect(robe2).open(TOKEN_IDS.LOOT_TWO);
+      await LootLoose.connect(robe2).open(TOKEN_IDS.LOOT_TWO);
 
       // transfer the 1155 to the owner
-      await LootItems.connect(robe2).safeTransferFrom(
+      await LootLoose.connect(robe2).safeTransferFrom(
         ADDRESSES.OWNER_LOOT_TWO,
         ADDRESSES.OWNER_LOOT_ONE,
         divineRobeId,
@@ -143,7 +143,7 @@ describe("LootTokens", () => {
       // now they have 2 divine robes
       expect(
         (
-          await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+          await LootLoose.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
         ).toNumber()
       ).to.be.equal(2);
     });
@@ -152,12 +152,12 @@ describe("LootTokens", () => {
       const loot = await getLootContract(ADDRESSES.OWNER_LOOT_ONE);
       await loot.functions["safeTransferFrom(address,address,uint256)"](
         ADDRESSES.OWNER_LOOT_ONE,
-        LootItemsAddress,
+        LootLooseAddress,
         TOKEN_IDS.LOOT_ONE
       );
       expect(
         (
-          await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+          await LootLoose.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
         ).toNumber()
       ).to.be.equal(1);
     });
@@ -165,21 +165,21 @@ describe("LootTokens", () => {
     it("Can reassemble an opened bag into its 721 NFT", async () => {
       const loot = await getLootContract(ADDRESSES.OWNER_LOOT_ONE);
       const robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
-      await LootItems.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
+      await LootLoose.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
       expect(await loot.ownerOf(TOKEN_IDS.LOOT_ONE)).to.be.equal(
-        LootItemsAddress
+        LootLooseAddress
       );
 
       // allow the contract to access our tokens
-      await LootItems.setApprovalForAll(LootItemsAddress, true);
+      await LootLoose.setApprovalForAll(LootLooseAddress, true);
 
       // do the recovery
-      await LootItems.connect(robe1).reassemble(TOKEN_IDS.LOOT_ONE);
+      await LootLoose.connect(robe1).reassemble(TOKEN_IDS.LOOT_ONE);
 
       // we no longer own the divine robe 1155
       expect(
         (
-          await LootItems.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
+          await LootLoose.balanceOf(ADDRESSES.OWNER_LOOT_ONE, divineRobeId)
         ).toNumber()
       ).to.be.equal(0);
 
@@ -191,7 +191,7 @@ describe("LootTokens", () => {
 
     describe("Opensea-compliant metadata", async () => {
       const checkMetadata = async (id: any, attributes: any, name: string) => {
-        let meta = await LootItems.tokenURI(id);
+        let meta = await LootLoose.tokenURI(id);
         meta = meta.replace("data:application/json;base64,", "");
         meta = new Buffer(meta, "base64").toString();
         meta = JSON.parse(meta);
@@ -200,7 +200,7 @@ describe("LootTokens", () => {
       };
 
       it("Correct metadata for: 'Tempest Grasp' Gloves of Protection +1", async () => {
-        const id = await LootItems.handId(TOKEN_IDS.LOOT_TWO);
+        const id = await LootLoose.handId(TOKEN_IDS.LOOT_TWO);
         const attributes = [
           {
             trait_type: "Slot",
@@ -235,7 +235,7 @@ describe("LootTokens", () => {
       });
 
       it("Correct metadata for: Divine Robe", async () => {
-        const id = await LootItems.chestId(TOKEN_IDS.LOOT_TWO);
+        const id = await LootLoose.chestId(TOKEN_IDS.LOOT_TWO);
         const attributes = [
           {
             trait_type: "Slot",
@@ -250,7 +250,7 @@ describe("LootTokens", () => {
       });
 
       it("Correct metadata for: Bronze Ring of Enlightenment", async () => {
-        const id = await LootItems.ringId(2169);
+        const id = await LootLoose.ringId(2169);
         const attributes = [
           {
             trait_type: "Slot",

@@ -13,7 +13,7 @@ import {Base64, toString} from "./MetadataUtils.sol";
 /// @author Georgios Konstantopoulos
 /// @notice Allows "opening" your ERC721 Loot bags and extracting the items inside it
 /// The created tokens are ERC1155 compatible, and their on-chain SVG is their name
-contract LootUnchained is ERC1155, LootTokensMetadata {
+contract LootLoose is ERC1155, LootTokensMetadata {
     // The OG Loot bags contract
     IERC721 constant loot = IERC721(0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7);
 
@@ -38,7 +38,7 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
         // only supports callback from the Loot contract
         require(msg.sender == address(loot));
         open(from, tokenId);
-        return LootUnchained.onERC721Received.selector;
+        return LootLoose.onERC721Received.selector;
     }
 
     /// @notice Opens your Loot bag and mints you 8 ERC-1155 tokens for each item
@@ -112,16 +112,16 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
     }
 
     function name() public pure returns (string memory) {
-        return "Loot Unchained";
+        return "LootLoose";
     }
 
     function symbol() public pure returns (string memory) {
-        return "LOOT-UNCHAINED";
+        return "LOL";
     }
 
     function contractURI() public pure returns (string memory) {
 
-      string memory json = '{"name": "Loot Unchained", "description": "Loot Unchained are items extracted from the OG Loot bags"}';
+      string memory json = '{"name": "LootLoose", "description": "LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags."}';
       string memory encodedJson = Base64.encode(bytes(json));
       string memory output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
 
@@ -150,7 +150,7 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
                 string(
                     abi.encodePacked(
                         '{ "name": "', tokenName(tokenId),'", ', 
-                        '"description" : ', '"Loot Tokens are items extracted from the OG Loot bags. Feel free to use Loot Tokens in any way you want.", ',
+                        '"description" : ', '"LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags.", ',
                         '"image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '", ' 
                         '"attributes": ', attributes(tokenId),
                         '}'
