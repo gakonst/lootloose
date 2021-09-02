@@ -59,8 +59,8 @@ contract LootTokensMetadata is LootComponents {
         return "LOL";
     }
 
+    /// @dev Opensea contract metadata: https://docs.opensea.io/docs/contract-level-metadata
     function contractURI() external pure returns (string memory) {
-
       string memory json = '{"name": "LootLoose", "description": "LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags."}';
       string memory encodedJson = Base64.encode(bytes(json));
       string memory output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
@@ -68,7 +68,7 @@ contract LootTokensMetadata is LootComponents {
       return output;
     }
 
-    /// @notice Returns an SVG for the provided token id that
+    /// @notice Returns an SVG for the provided token id
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string[4] memory parts;
         parts[
@@ -105,6 +105,8 @@ contract LootTokensMetadata is LootComponents {
         return output;
     }
 
+    /// @notice Returns the attributes associated with this item.
+    /// @dev Opensea Standards: https://docs.opensea.io/docs/metadata-standards
     function attributes(uint256 id) public view returns (string memory) {
         (uint256[5] memory components, uint256 itemType) = TokenId.fromId(id);
         // should we also use components[0] which contains the item name?
@@ -138,6 +140,7 @@ contract LootTokensMetadata is LootComponents {
         return res;
     }
 
+    // Helper for encoding as json w/ trait_type / value from opensea
     function trait(string memory _traitType, string memory _value) internal pure returns (string memory) {
         return string(abi.encodePacked('{',
             '"trait_type": "', _traitType, '", ',
@@ -145,7 +148,8 @@ contract LootTokensMetadata is LootComponents {
         '}'));
       }
 
-    // Returns the token's name
+    // @notice Given an ERC1155 token id, it returns its name by decoding and parsing
+    // the id
     function tokenName(uint256 id) public view returns (string memory) {
         (uint256[5] memory components, uint256 itemType) = TokenId.fromId(id);
         return componentsToString(components, itemType);
@@ -269,6 +273,15 @@ contract LootTokensMetadata is LootComponents {
             });
     }
 
+    function idsMany(uint256[] memory tokenIds) public pure returns (ItemIds[] memory) {
+        ItemIds[] memory itemids = new ItemIds[](tokenIds.length);
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            itemids[i] = ids(tokenIds[i]);
+        }
+
+        return itemids;
+    }
+
     // Given an ERC721 bag, returns the names of the items in the bag
     function names(uint256 tokenId) public view returns (ItemNames memory) {
         ItemIds memory items = ids(tokenId);
@@ -283,5 +296,14 @@ contract LootTokensMetadata is LootComponents {
                 neck: tokenName(items.neck),
                 ring: tokenName(items.ring)
             });
+    }
+
+    function namesMany(uint256[] memory tokenNames) public view returns (ItemNames[] memory) {
+        ItemNames[] memory itemNames = new ItemNames[](tokenNames.length);
+        for (uint256 i = 0; i < tokenNames.length; i++) {
+            itemNames[i] = names(tokenNames[i]);
+        }
+
+        return itemNames;
     }
 }

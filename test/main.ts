@@ -196,11 +196,7 @@ describe("LootLoose", () => {
           value: "Yes",
         },
       ];
-      checkMetadata(
-        id,
-        attributes,
-        "'Tempest Grasp' Gloves of Protection +1"
-      );
+      checkMetadata(id, attributes, "'Tempest Grasp' Gloves of Protection +1");
     });
 
     it("Correct metadata for: Divine Robe", async () => {
@@ -238,48 +234,66 @@ describe("LootLoose", () => {
     });
   });
 
-  describe("User can split and re-unify their tokens", () => {
-    it("Tokens have expected names", async () => {
-      const checkNames = (names: any, expected: any) => {
-        expect(names.weapon).to.be.equal(expected.weapon);
-        expect(names.chest).to.be.equal(expected.chest);
-        expect(names.head).to.be.equal(expected.head);
-        expect(names.waist).to.be.equal(expected.waist);
-        expect(names.foot).to.be.equal(expected.foot);
-        expect(names.neck).to.be.equal(expected.neck);
-        expect(names.ring).to.be.equal(expected.ring);
-      };
+  describe("Name / Id meta", () => {
+    const checkNames = (names: any, expected: any) => {
+      expect(names.weapon).to.be.equal(expected.weapon);
+      expect(names.chest).to.be.equal(expected.chest);
+      expect(names.head).to.be.equal(expected.head);
+      expect(names.waist).to.be.equal(expected.waist);
+      expect(names.foot).to.be.equal(expected.foot);
+      expect(names.neck).to.be.equal(expected.neck);
+      expect(names.ring).to.be.equal(expected.ring);
+    };
 
+    it("Divine Robe", async () => {
       expect(await LootLoose.tokenName(divineRobeId)).to.be.equal(
         "Divine Robe"
       );
-      const names = await LootLoose.names(TOKEN_IDS.LOOT_TWO);
-      let expected = {
-        weapon: "Falchion of Fury",
-        chest: "Divine Robe",
-        head: "Great Helm",
-        waist: "'Grim Peak' Sash of Enlightenment +1",
-        foot: "Linen Shoes of Titans",
-        hand: "'Tempest Grasp' Gloves of Protection +1",
-        neck: "Necklace of Protection",
-        ring: "Bronze Ring",
-      };
-      checkNames(names, expected);
-
-      const names2 = await LootLoose.names(TOKEN_IDS.LOOT_ONE);
-      expected = {
-        weapon: "Katana",
-        chest: "Divine Robe",
-        head: "Great Helm",
-        waist: "Wool Sash",
-        foot: "Divine Slippers",
-        hand: "Chain Gloves",
-        neck: "Amulet",
-        ring: "Gold Ring",
-      };
-      checkNames(names2, expected);
     });
 
+    const bag1 = {
+      weapon: "Katana",
+      chest: "Divine Robe",
+      head: "Great Helm",
+      waist: "Wool Sash",
+      foot: "Divine Slippers",
+      hand: "Chain Gloves",
+      neck: "Amulet",
+      ring: "Gold Ring",
+    };
+
+    const bag2 = {
+      weapon: "Falchion of Fury",
+      chest: "Divine Robe",
+      head: "Great Helm",
+      waist: "'Grim Peak' Sash of Enlightenment +1",
+      foot: "Linen Shoes of Titans",
+      hand: "'Tempest Grasp' Gloves of Protection +1",
+      neck: "Necklace of Protection",
+      ring: "Bronze Ring",
+    };
+
+    it("Bag 1", async () => {
+      const names = await LootLoose.names(TOKEN_IDS.LOOT_ONE);
+      checkNames(names, bag1);
+    });
+
+    it("Bag 2", async () => {
+      const names = await LootLoose.names(TOKEN_IDS.LOOT_TWO);
+      checkNames(names, bag2);
+    });
+
+    it("Batched Bags", async () => {
+      const names = await LootLoose.namesMany([
+        TOKEN_IDS.LOOT_ONE,
+        TOKEN_IDS.LOOT_TWO,
+      ]);
+      checkNames(names[0], bag1);
+      checkNames(names[1], bag2);
+    });
+  });
+
+  describe("User can split and re-unify their tokens", () => {
     it("Should open a bag w/ approve + transferfrom pattern", async () => {
       const robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
       await LootLoose.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
@@ -343,6 +357,5 @@ describe("LootLoose", () => {
         ADDRESSES.OWNER_LOOT_ONE
       );
     });
-
   });
 });

@@ -195,6 +195,67 @@
   {
     "inputs": [
       {
+        "internalType": "uint256[]",
+        "name": "tokenIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "idsMany",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "weapon",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "chest",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "head",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "waist",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "foot",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hand",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "neck",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ring",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct LootTokensMetadata.ItemIds[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "itemType",
         "type": "uint256"
@@ -285,6 +346,67 @@
         "internalType": "struct LootTokensMetadata.ItemNames",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "tokenNames",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "namesMany",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "weapon",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "chest",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "head",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "waist",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "foot",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "hand",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "neck",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "ring",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct LootTokensMetadata.ItemNames[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
