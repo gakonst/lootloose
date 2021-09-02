@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 import "./LootTokensMetadata.sol";
-import {Base64, toString} from "./MetadataUtils.sol";
 
 /// @title Loot Tokens
 /// @author Georgios Konstantopoulos
@@ -110,98 +109,4 @@ contract LootLoose is ERC1155, LootTokensMetadata {
     function uri(uint256 tokenId) public view override returns (string memory) {
         return tokenURI(tokenId);
     }
-
-    function name() public pure returns (string memory) {
-        return "LootLoose";
-    }
-
-    function symbol() public pure returns (string memory) {
-        return "LOL";
-    }
-
-    function contractURI() public pure returns (string memory) {
-
-      string memory json = '{"name": "LootLoose", "description": "LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags."}';
-      string memory encodedJson = Base64.encode(bytes(json));
-      string memory output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
-
-      return output;
-    }
-
-    /// @notice Returns an SVG for the provided token id that
-    function tokenURI(uint256 tokenId) public view returns (string memory) {
-        string[4] memory parts;
-        parts[
-            0
-        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
-
-        parts[1] = tokenName(tokenId);
-
-        parts[2] = '</text><text x="10" y="40" class="base">';
-
-        parts[3] = "</text></svg>";
-
-        string memory output = string(
-            abi.encodePacked(parts[0], parts[1], parts[2], parts[3])
-        );
-
-        string memory json = Base64.encode(
-            bytes(
-                string(
-                    abi.encodePacked(
-                        '{ "name": "', tokenName(tokenId),'", ', 
-                        '"description" : ', '"LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags.", ',
-                        '"image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '", ' 
-                        '"attributes": ', attributes(tokenId),
-                        '}'
-                    )
-                )
-            )
-        );
-        output = string(
-            abi.encodePacked("data:application/json;base64,", json)
-        );
-
-        return output;
-    }
-
-    function attributes(uint256 id) public view returns (string memory) {
-        (uint256[5] memory components, uint256 itemType) = TokenId.fromId(id);
-        // should we also use components[0] which contains the item name?
-        string memory slot = itemTypes[itemType];
-        string memory res = string(abi.encodePacked('[', trait("Slot", slot)));
-
-        string memory item = itemName(itemType, components[0]);
-        res = string(abi.encodePacked(res, ", ", trait("Item", item)));
-
-        if (components[1] > 0) {
-            string memory data = suffixes[components[1] - 1];
-            res = string(abi.encodePacked(res, ", ", trait("Suffix", data)));
-        }
-
-        if (components[2] > 0) {
-            string memory data = namePrefixes[components[2] - 1];
-            res = string(abi.encodePacked(res, ", ", trait("Name Prefix", data)));
-        }
-
-        if (components[3] > 0) {
-            string memory data = nameSuffixes[components[3] - 1];
-            res = string(abi.encodePacked(res, ", ", trait("Name Suffix", data)));
-        }
-
-        if (components[4] > 0) {
-            res = string(abi.encodePacked(res, ", ", trait("Augmentation", "Yes")));
-        }
-
-        res = string(abi.encodePacked(res, ']'));
-
-        return res;
-    }
-
-    function trait(string memory _traitType, string memory _value) internal pure returns (string memory) {
-        return string(abi.encodePacked('{',
-            '"trait_type": "', _traitType, '", ',
-            '"value": "', _value, '"',
-        '}'));
-      }
 }

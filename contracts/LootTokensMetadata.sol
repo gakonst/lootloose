@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./LootComponents.sol";
 import "./TokenId.sol";
+import {Base64, toString} from "./MetadataUtils.sol";
 
 /// @title Helper contract for generating ERC-1155 token ids and descriptions for
 /// the individual items inside a Loot bag.
@@ -49,6 +50,100 @@ contract LootTokensMetadata is LootComponents {
         string neck;
         string ring;
     }
+
+    function name() external pure returns (string memory) {
+        return "LootLoose";
+    }
+
+    function symbol() external pure returns (string memory) {
+        return "LOL";
+    }
+
+    function contractURI() external pure returns (string memory) {
+
+      string memory json = '{"name": "LootLoose", "description": "LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags."}';
+      string memory encodedJson = Base64.encode(bytes(json));
+      string memory output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
+
+      return output;
+    }
+
+    /// @notice Returns an SVG for the provided token id that
+    function tokenURI(uint256 tokenId) public view returns (string memory) {
+        string[4] memory parts;
+        parts[
+            0
+        ] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
+
+        parts[1] = tokenName(tokenId);
+
+        parts[2] = '</text><text x="10" y="40" class="base">';
+
+        parts[3] = "</text></svg>";
+
+        string memory output = string(
+            abi.encodePacked(parts[0], parts[1], parts[2], parts[3])
+        );
+
+        string memory json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{ "name": "', tokenName(tokenId),'", ', 
+                        '"description" : ', '"LootLoose lets you unbundle your Loot Bags into individual ERC1155 NFTs or rebundle items into their original Loot Bags.", ',
+                        '"image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '", ' 
+                        '"attributes": ', attributes(tokenId),
+                        '}'
+                    )
+                )
+            )
+        );
+        output = string(
+            abi.encodePacked("data:application/json;base64,", json)
+        );
+
+        return output;
+    }
+
+    function attributes(uint256 id) public view returns (string memory) {
+        (uint256[5] memory components, uint256 itemType) = TokenId.fromId(id);
+        // should we also use components[0] which contains the item name?
+        string memory slot = itemTypes[itemType];
+        string memory res = string(abi.encodePacked('[', trait("Slot", slot)));
+
+        string memory item = itemName(itemType, components[0]);
+        res = string(abi.encodePacked(res, ", ", trait("Item", item)));
+
+        if (components[1] > 0) {
+            string memory data = suffixes[components[1] - 1];
+            res = string(abi.encodePacked(res, ", ", trait("Suffix", data)));
+        }
+
+        if (components[2] > 0) {
+            string memory data = namePrefixes[components[2] - 1];
+            res = string(abi.encodePacked(res, ", ", trait("Name Prefix", data)));
+        }
+
+        if (components[3] > 0) {
+            string memory data = nameSuffixes[components[3] - 1];
+            res = string(abi.encodePacked(res, ", ", trait("Name Suffix", data)));
+        }
+
+        if (components[4] > 0) {
+            res = string(abi.encodePacked(res, ", ", trait("Augmentation", "Yes")));
+        }
+
+        res = string(abi.encodePacked(res, ']'));
+
+        return res;
+    }
+
+    function trait(string memory _traitType, string memory _value) internal pure returns (string memory) {
+        return string(abi.encodePacked('{',
+            '"trait_type": "', _traitType, '", ',
+            '"value": "', _value, '"',
+        '}'));
+      }
 
     // Returns the token's name
     function tokenName(uint256 id) public view returns (string memory) {
@@ -104,18 +199,18 @@ contract LootTokensMetadata is LootComponents {
         // add the name prefix / suffix
         if (components[2] > 0) {
             // prefix
-            string memory name = string(
+            string memory namePrefixSuffix = string(
                 abi.encodePacked("'", namePrefixes[components[2] - 1])
             );
             if (components[3] > 0) {
-                name = string(
-                    abi.encodePacked(name, " ", nameSuffixes[components[3] - 1])
+                namePrefixSuffix = string(
+                    abi.encodePacked(namePrefixSuffix, " ", nameSuffixes[components[3] - 1])
                 );
             }
 
-            name = string(abi.encodePacked(name, "' "));
+            namePrefixSuffix = string(abi.encodePacked(namePrefixSuffix, "' "));
 
-            item = string(abi.encodePacked(name, item));
+            item = string(abi.encodePacked(namePrefixSuffix, item));
         }
 
         // add the augmentation
