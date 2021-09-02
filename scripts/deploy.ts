@@ -7,11 +7,11 @@ async function main(): Promise<void> {
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  // Deploy LootItems
-  const LootItems = await ethers.getContractFactory("LootItems");
-  const lootitems = await LootItems.deploy();
+  // Deploy LootLoose
+  const LootLoose = await ethers.getContractFactory("LootLoose");
+  const lootloose = await LootLoose.deploy();
 
-  console.log("Deployed LootItems address:", lootitems.address);
+  console.log("Deployed LootLoose address:", lootloose.address);
 }
 
 main()
