@@ -107,6 +107,27 @@ contract LootUnchained is ERC1155, LootTokensMetadata {
         _burn(msg.sender, id, 1);
     }
 
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        return tokenURI(tokenId);
+    }
+
+    function name() public pure returns (string memory) {
+        return "Loot Unchained";
+    }
+
+    function symbol() public pure returns (string memory) {
+        return "LOOT-UNCHAINED";
+    }
+
+    function contractURI() public pure returns (string memory) {
+
+      string memory json = '{"name": "Loot Unchained", "description": "Loot Unchained are items extracted from the OG Loot bags"}';
+      string memory encodedJson = Base64.encode(bytes(json));
+      string memory output = string(abi.encodePacked('data:application/json;base64,', encodedJson));
+
+      return output;
+    }
+
     /// @notice Returns an SVG for the provided token id that
     function tokenURI(uint256 tokenId) public view returns (string memory) {
         string[4] memory parts;
