@@ -8,6 +8,11 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 import "./LootTokensMetadata.sol";
 
+interface ILootAirdrop {
+    function claimForLoot(uint256) external payable;
+    function safeTransferFrom(address, address, uint256) external payable;
+}
+
 /// @title Loot Tokens
 /// @author Georgios Konstantopoulos
 /// @notice Allows "opening" your ERC721 Loot bags and extracting the items inside it
@@ -23,8 +28,21 @@ contract LootLoose is ERC1155, LootTokensMetadata {
     /// opens it. Use it if you have already approved the transfer, else consider
     /// just transferring directly to the contract and letting the `onERC721Received`
     /// do its part
-    function open(uint256 tokenId) public {
+    function open(uint256 tokenId) external {
         loot.safeTransferFrom(msg.sender, address(this), tokenId);
+    }
+
+    /// @notice Claims an airdrop for a token owned by LootLoose. The airdrop is then
+    /// claimable by the owner of the reassembled pieces.
+    function claimAirdropForLootLoose(ILootAirdrop airdrop, uint256 tokenId) external payable {
+        airdrop.claimForLoot{value: msg.value}(tokenId);
+    }
+
+    /// @notice Allows you to claim an airdrop that has already been claimed by LootLoose
+    /// if you are the owner of the ERC721 bag the airdrop corresponds to
+    function claimAirdrop(ILootAirdrop airdrop, uint256 tokenId) external {
+        require(loot.ownerOf(tokenId) == msg.sender, "you do not own the lootbag for this airdrop");
+        airdrop.safeTransferFrom(address(this), msg.sender, tokenId);
     }
 
     /// @notice ERC721 callback which will open the bag

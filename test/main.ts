@@ -83,6 +83,81 @@ describe("LootLoose", () => {
     divineRobeId = await LootLoose.chestId(TOKEN_IDS.LOOT_ONE);
   });
 
+  describe("Can claim 3rd party ERC721 airdrops", async () => {
+    let airdrop: Contract;
+    let robe1: Signer;
+
+    beforeEach(async () => {
+      // deploy the airdrop contract
+      const factory = await ethers.getContractFactory("LootAirdrop");
+      airdrop = await factory.deploy();
+
+      // open a bag
+      robe1 = await impersonateSigner(ADDRESSES.OWNER_LOOT_ONE);
+      await LootLoose.connect(robe1).open(TOKEN_IDS.LOOT_ONE);
+
+      // approve for all so that we can re-assemble
+      await LootLoose.connect(robe1).setApprovalForAll(LootLooseAddress, true);
+    });
+
+    it("cannot claimAirdropForLootLoose if the contract doesn't own the NFT", async () => {
+      await expect(
+        LootLoose.claimAirdropForLootLoose(
+          airdrop.address,
+          TOKEN_IDS.LOOT_TWO,
+          { value: ethers.utils.parseEther("1") }
+        )
+      ).revertedWith("you do not own the lootbag for this airdrop");
+    });
+
+    it("cannot claimAirdropForLootLoose if you do not pay", async () => {
+      await expect(
+        LootLoose.claimAirdropForLootLoose(
+          airdrop.address,
+          TOKEN_IDS.LOOT_ONE,
+          { value: ethers.utils.parseEther("0.5") }
+        )
+      ).to.be.revertedWith("pay up");
+    });
+
+    it("can claimAirdropForLootLoose if the contract owns the NFT", async () => {
+      await LootLoose.claimAirdropForLootLoose(
+        airdrop.address,
+        TOKEN_IDS.LOOT_ONE,
+        { value: ethers.utils.parseEther("1") }
+      );
+      expect(await airdrop.ownerOf(TOKEN_IDS.LOOT_ONE)).equal(LootLooseAddress);
+    });
+
+    it("only the owner of the bag can claim the airdrop from the contract", async () => {
+      await LootLoose.claimAirdropForLootLoose(
+        airdrop.address,
+        TOKEN_IDS.LOOT_ONE,
+        { value: ethers.utils.parseEther("1") }
+      );
+
+      // it fails if we haven't reclaimed the bag
+      await expect(
+        LootLoose.connect(robe1).claimAirdrop(
+          airdrop.address,
+          TOKEN_IDS.LOOT_ONE
+        )
+      ).to.be.revertedWith("you do not own the lootbag for this airdrop");
+
+      // reassemble it
+      await LootLoose.connect(robe1).reassemble(TOKEN_IDS.LOOT_ONE);
+
+      // claim
+      await LootLoose.connect(robe1).claimAirdrop(
+        airdrop.address,
+        TOKEN_IDS.LOOT_ONE
+      );
+      expect(await airdrop.ownerOf(TOKEN_IDS.LOOT_ONE)).equal(
+        ADDRESSES.OWNER_LOOT_ONE
+      );
+    });
+  });
+
   describe("User can split and re-unify their tokens", () => {
     it("Tokens have expected names", async () => {
       const checkNames = (names: any, expected: any) => {
