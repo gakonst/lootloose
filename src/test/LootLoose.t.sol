@@ -5,7 +5,7 @@ import "ds-test/test.sol";
 
 import "./utils/Hevm.sol";
 import "./utils/Loot.sol";
-import "../LootLoose.sol";
+import { LootLoose, Errors } from "../LootLoose.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
@@ -30,11 +30,7 @@ contract LootLooseUser is ERC721Holder, ERC1155Holder {
     }
 
     function open(uint256 tokenId) public {
-        loot.safeTransferFrom(
-            address(this),
-            address(lootLoose),
-            tokenId
-        );
+        loot.safeTransferFrom(address(this), address(lootLoose), tokenId);
     }
 
     // 2 txs
@@ -49,9 +45,10 @@ contract LootLooseUser is ERC721Holder, ERC1155Holder {
 }
 
 contract LootLooseTest is DSTest {
-    uint256 constant internal BAG = 10;
-    uint256 constant internal OTHER_BAG = 100;
-    Hevm constant internal hevm = Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+    uint256 internal constant BAG = 10;
+    uint256 internal constant OTHER_BAG = 100;
+    Hevm internal constant hevm =
+        Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
     // contracts
     Loot internal loot;
@@ -59,7 +56,6 @@ contract LootLooseTest is DSTest {
 
     // users
     LootLooseUser internal alice;
-    LootLooseUser internal bob;
 
     function setUp() public virtual {
         // deploy contracts
@@ -70,6 +66,16 @@ contract LootLooseTest is DSTest {
         alice = new LootLooseUser(loot, lootLoose);
         alice.claim(BAG);
         assertEq(loot.ownerOf(BAG), address(alice));
+    }
+}
+
+contract ERC721Callback is LootLooseTest {
+    function testCannotCallOnERC721ReceivedDirectly() public {
+        try lootLoose.onERC721Received(address(0), address(0), 0, "0x") {} catch
+            Error(string memory error)
+        {
+            assertEq(error, Errors.IsNotLoot);
+        }
     }
 }
 
@@ -90,6 +96,8 @@ contract Open is LootLooseTest {
 }
 
 contract Reassemble is LootLooseTest {
+    LootLooseUser internal bob;
+
     function setUp() public override {
         super.setUp();
 

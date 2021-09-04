@@ -13,6 +13,11 @@ interface ILootAirdrop {
     function safeTransferFrom(address, address, uint256) external payable;
 }
 
+library Errors {
+    string constant DoesNotOwnLootbag = "you do not own the lootbag for this airdrop";
+    string constant IsNotLoot = "msg.sender is not the loot contract";
+}
+
 /// @title Loot Tokens
 /// @author Georgios Konstantopoulos
 /// @notice Allows "opening" your ERC721 Loot bags and extracting the items inside it
@@ -43,7 +48,7 @@ contract LootLoose is ERC1155, LootTokensMetadata {
     /// @notice Allows you to claim an airdrop that has already been claimed by LootLoose
     /// if you are the owner of the ERC721 bag the airdrop corresponds to
     function claimAirdrop(ILootAirdrop airdrop, uint256 tokenId) external {
-        require(loot.ownerOf(tokenId) == msg.sender, "you do not own the lootbag for this airdrop");
+        require(loot.ownerOf(tokenId) == msg.sender, Errors.DoesNotOwnLootbag);
         airdrop.safeTransferFrom(address(this), msg.sender, tokenId);
     }
 
@@ -55,7 +60,7 @@ contract LootLoose is ERC1155, LootTokensMetadata {
         bytes calldata
     ) external returns (bytes4) {
         // only supports callback from the Loot contract
-        require(msg.sender == address(loot), "msg.sender is not the loot contract");
+        require(msg.sender == address(loot), Errors.IsNotLoot);
         open(from, tokenId);
         return LootLoose.onERC721Received.selector;
     }
