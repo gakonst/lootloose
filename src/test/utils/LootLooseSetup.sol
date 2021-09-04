@@ -43,6 +43,10 @@ contract LootLooseUser is ERC721Holder, ERC1155Holder {
         lootLoose.reassemble(tokenId);
     }
 
+    function transferERC1155(address to, uint256 tokenId, uint256 amount) public {
+        lootLoose.safeTransferFrom(address(this), to, tokenId, amount, "0x");
+    }
+
     function claimAirdrop(address airdrop, uint256 tokenId) public {
         lootLoose.claimAirdrop(ILootAirdrop(airdrop), tokenId);
     }

@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./utils/LootLooseSetup.sol";
 import "./utils/LootAirdrop.sol";
 import {ILootAirdrop} from "../LootLoose.sol";
+import {ItemIds} from "../LootTokensMetadata.sol";
 
 contract ERC721Callback is LootLooseTest {
     function testCannotCallOnERC721ReceivedDirectly() public {
@@ -24,10 +25,24 @@ contract Open is LootLooseTest {
     function testCanOpenBagWithApproval() public {
         alice.openWithApproval(BAG);
         assertEq(loot.ownerOf(BAG), address(lootLoose));
+        checkOwns1155s(BAG, address(alice));
     }
 
     function testFailCannotOpenBagYouDoNotOwn() public {
         alice.open(OTHER_BAG);
+    }
+
+    // helper for checking ownership of erc1155 tokens after unbundling a bag
+    function checkOwns1155s(uint256 tokenId, address who) private {
+        ItemIds memory ids = lootLoose.ids(tokenId);
+        assertEq(lootLoose.balanceOf(who, ids.weapon), 1);
+        assertEq(lootLoose.balanceOf(who, ids.chest), 1);
+        assertEq(lootLoose.balanceOf(who, ids.head), 1);
+        assertEq(lootLoose.balanceOf(who, ids.waist), 1);
+        assertEq(lootLoose.balanceOf(who, ids.foot), 1);
+        assertEq(lootLoose.balanceOf(who, ids.hand), 1);
+        assertEq(lootLoose.balanceOf(who, ids.neck), 1);
+        assertEq(lootLoose.balanceOf(who, ids.ring), 1);
     }
 }
 
@@ -47,11 +62,24 @@ contract Reassemble is LootLooseTest {
     // Reassembling does not require `setsApprovalForAll`
     function testCanReassemble() public {
         alice.reassemble(BAG);
+        assertEq(loot.ownerOf(BAG), address(alice));
+
         bob.reassemble(OTHER_BAG);
+        assertEq(loot.ownerOf(OTHER_BAG), address(bob));
     }
 
-    function testFailCannotReassembleBagYouDoNotOwn() public {
-        alice.reassemble(OTHER_BAG);
+    function testCannotReassembleBagYouDoNotOwn() public {
+        try alice.reassemble(OTHER_BAG) {} catch Error(string memory error) {
+            assertEq(error, "ERC1155: burn amount exceeds balance");
+        }
+    }
+
+    function testCannotReassembleWithoutOwningAllPieces() public {
+        uint256 id = lootLoose.weaponId(BAG);
+        alice.transferERC1155(address(bob), id, 1);
+        try alice.reassemble(BAG) {} catch Error(string memory error) {
+            assertEq(error, "ERC1155: burn amount exceeds balance");
+        }
     }
 }
 

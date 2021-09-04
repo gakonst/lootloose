@@ -5,6 +5,29 @@ import "./LootComponents.sol";
 import "./TokenId.sol";
 import {Base64, toString} from "./MetadataUtils.sol";
 
+struct ItemIds {
+    uint256 weapon;
+    uint256 chest;
+    uint256 head;
+    uint256 waist;
+    uint256 foot;
+    uint256 hand;
+    uint256 neck;
+    uint256 ring;
+}
+
+struct ItemNames {
+    string weapon;
+    string chest;
+    string head;
+    string waist;
+    string foot;
+    string hand;
+    string neck;
+    string ring;
+}
+
+
 /// @title Helper contract for generating ERC-1155 token ids and descriptions for
 /// the individual items inside a Loot bag.
 /// @author Georgios Konstantopoulos
@@ -29,27 +52,6 @@ contract LootTokensMetadata is LootComponents {
         "Neck",
         "Ring"
     ];
-
-    struct ItemIds {
-        uint256 weapon;
-        uint256 chest;
-        uint256 head;
-        uint256 waist;
-        uint256 foot;
-        uint256 hand;
-        uint256 neck;
-        uint256 ring;
-    }
-    struct ItemNames {
-        string weapon;
-        string chest;
-        string head;
-        string waist;
-        string foot;
-        string hand;
-        string neck;
-        string ring;
-    }
 
     function name() external pure returns (string memory) {
         return "LootLoose";
