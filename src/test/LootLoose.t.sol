@@ -7,32 +7,106 @@ import "./utils/Hevm.sol";
 import "./utils/Loot.sol";
 import "../LootLoose.sol";
 
-contract LootUser {
-    Loot loot;
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
-    constructor(Loot _loot) {
+// NB: Using callbacks is hard, since we're a smart contract account we need
+// to be implementing the callbacks
+contract LootLooseUser is ERC721Holder, ERC1155Holder {
+    Loot loot;
+    LootLoose lootLoose;
+
+    constructor(Loot _loot, LootLoose _lootLoose) {
         loot = _loot;
+        lootLoose = _lootLoose;
     }
 
-    function claim(uint256 tokenId) {
+    function setApprovalForAll(address who, bool status) public {
+        lootLoose.setApprovalForAll(who, status);
+    }
+
+    function claim(uint256 tokenId) public {
         loot.claim(tokenId);
+    }
+
+    function open(uint256 tokenId) public {
+        loot.safeTransferFrom(
+            address(this),
+            address(lootLoose),
+            tokenId
+        );
+    }
+
+    // 2 txs
+    function openWithApproval(uint256 tokenId) public {
+        loot.approve(address(lootLoose), tokenId);
+        lootLoose.open(tokenId);
+    }
+
+    function reassemble(uint256 tokenId) public {
+        lootLoose.reassemble(tokenId);
     }
 }
 
 contract LootLooseTest is DSTest {
-    Hevm hevm;
-    Loot loot;
-    LootLoose lootLoose;
+    uint256 constant internal BAG = 10;
+    uint256 constant internal OTHER_BAG = 100;
+    Hevm constant internal hevm = Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
-    function setUp() public {
-        hevm = Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+    // contracts
+    Loot internal loot;
+    LootLoose internal lootLoose;
+
+    // users
+    LootLooseUser internal alice;
+    LootLooseUser internal bob;
+
+    function setUp() public virtual {
+        // deploy contracts
         loot = new Loot();
-        alice = new LootUser(loot);
+        lootLoose = new LootLoose(address(loot));
 
-        lootLoose = new LootLooseTest();
+        // create alice's account & claim a bag
+        alice = new LootLooseUser(loot, lootLoose);
+        alice.claim(BAG);
+        assertEq(loot.ownerOf(BAG), address(alice));
+    }
+}
+
+contract Open is LootLooseTest {
+    function testCanOpenBag() public {
+        alice.open(BAG);
+        assertEq(loot.ownerOf(BAG), address(lootLoose));
     }
 
-    function testCanOpenBag() {
+    function testCanOpenBagWithApproval() public {
+        alice.openWithApproval(BAG);
+        assertEq(loot.ownerOf(BAG), address(lootLoose));
+    }
 
+    function testFailCannotOpenBagYouDoNotOwn() public {
+        alice.open(OTHER_BAG);
+    }
+}
+
+contract Reassemble is LootLooseTest {
+    function setUp() public override {
+        super.setUp();
+
+        bob = new LootLooseUser(loot, lootLoose);
+        bob.claim(OTHER_BAG);
+        bob.open(OTHER_BAG);
+
+        alice.open(BAG);
+    }
+
+    // Reassembling does not require `setsApprovalForAll`
+    function testCanReassemble() public {
+        alice.reassemble(BAG);
+        bob.reassemble(OTHER_BAG);
+    }
+
+    function testFailCannotReassembleBagYouDoNotOwn() public {
+        alice.reassemble(OTHER_BAG);
     }
 }

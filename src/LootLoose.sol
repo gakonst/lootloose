@@ -19,10 +19,12 @@ interface ILootAirdrop {
 /// The created tokens are ERC1155 compatible, and their on-chain SVG is their name
 contract LootLoose is ERC1155, LootTokensMetadata {
     // The OG Loot bags contract
-    IERC721 constant loot = IERC721(0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7);
+    IERC721 immutable loot;
 
     // No need for a URI since we're doing everything onchain
-    constructor() ERC1155("") {}
+    constructor(address _loot) ERC1155("") {
+        loot = IERC721(_loot);
+    }
 
     /// @notice Transfers the erc721 bag from your account to the contract and then
     /// opens it. Use it if you have already approved the transfer, else consider
@@ -53,7 +55,7 @@ contract LootLoose is ERC1155, LootTokensMetadata {
         bytes calldata
     ) external returns (bytes4) {
         // only supports callback from the Loot contract
-        require(msg.sender == address(loot));
+        require(msg.sender == address(loot), "msg.sender is not the loot contract");
         open(from, tokenId);
         return LootLoose.onERC721Received.selector;
     }
