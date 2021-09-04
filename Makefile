@@ -2,7 +2,7 @@
 update:; dapp update
 
 # Install dependencies & apply patches
-install :; make npm && make patch && make solc
+install :; make update && make npm && make patch && make solc
 npm:; yarn install
 
 # apply patches or let it fail gracefully
