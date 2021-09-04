@@ -38,3 +38,10 @@ IF you want to patch your deps, you must also add `ignore = dirty` to its corres
 ```
 
 https://stackoverflow.com/a/5542452
+
+# gitattributes
+
+Highlight Shell for dapprc
+
+.dapprc linguist-language=Shell
+
