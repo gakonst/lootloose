@@ -24,3 +24,17 @@ https://github.com/Rari-Capital/duppgrade
 # Solc version
 
 Need to install custom version to last
+
+# Patches
+
+IF you want to patch your deps, you must also add `ignore = dirty` to its corresponding
+`.gitmodules`, e.g.
+
+```
+[submodule "lib/openzeppelin-contracts"]
+    path = lib/openzeppelin-contracts
+    url = https://github.com/OpenZeppelin/openzeppelin-contracts
+    ignore = dirty
+```
+
+https://stackoverflow.com/a/5542452
