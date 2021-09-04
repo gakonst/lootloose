@@ -5,7 +5,7 @@ import "ds-test/test.sol";
 
 import "./Hevm.sol";
 import "./Loot.sol";
-import { LootLoose, Errors } from "../../LootLoose.sol";
+import { ILootAirdrop, LootLoose, Errors } from "../../LootLoose.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
@@ -41,6 +41,10 @@ contract LootLooseUser is ERC721Holder, ERC1155Holder {
 
     function reassemble(uint256 tokenId) public {
         lootLoose.reassemble(tokenId);
+    }
+
+    function claimAirdrop(address airdrop, uint256 tokenId) public {
+        lootLoose.claimAirdrop(ILootAirdrop(airdrop), tokenId);
     }
 }
 
