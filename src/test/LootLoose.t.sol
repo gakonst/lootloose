@@ -69,7 +69,7 @@ contract Reassemble is LootLooseTest {
     }
 
     function testCannotReassembleBagYouDoNotOwn() public {
-        try alice.reassemble(OTHER_BAG) {} catch Error(string memory error) {
+        try alice.reassemble(OTHER_BAG) { fail(); } catch Error(string memory error) {
             assertEq(error, "ERC1155: burn amount exceeds balance");
         }
     }
@@ -77,7 +77,7 @@ contract Reassemble is LootLooseTest {
     function testCannotReassembleWithoutOwningAllPieces() public {
         uint256 id = lootLoose.weaponId(BAG);
         alice.transferERC1155(address(bob), id, 1);
-        try alice.reassemble(BAG) {} catch Error(string memory error) {
+        try alice.reassemble(BAG) { fail(); } catch Error(string memory error) {
             assertEq(error, "ERC1155: burn amount exceeds balance");
         }
     }
@@ -116,7 +116,7 @@ contract Airdrop is LootLooseTest {
             BAG
         );
 
-        try alice.claimAirdrop(address(airdrop), BAG) {} catch Error(
+        try alice.claimAirdrop(address(airdrop), BAG) { fail(); } catch Error(
             string memory error
         ) {
             assertEq(error, Errors.DoesNotOwnLootbag);
