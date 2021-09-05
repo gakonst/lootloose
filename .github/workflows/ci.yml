@@ -18,6 +18,6 @@ jobs:
         run: nix-shell --run 'make'
 
       - name: Run tests
-        run: nix-shell --run 'dapp test'
+        run: nix-shell --run 'make test'
         env:
          ETH_RPC_URL: https://eth-mainnet.alchemyapi.io/v2/${{ secrets.ALCHEMY_API_KEY }}
