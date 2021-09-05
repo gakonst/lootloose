@@ -1,27 +1,23 @@
 name: Tests
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+on: [push, pull_request]
 
-jobs: 
+jobs:
   tests:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Setup node
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: cachix/install-nix-action@v13
+      - uses: cachix/cachix-action@v10
         with:
-          node-version: '12.x'
+          name: dapp
 
-      - name: Install Dependencies
-        run: yarn install
+      - name: Install dependencies
+        run: nix-shell --run 'make'
 
-      - name: Test
-        run: yarn test
+      - name: Run tests
+        run: nix-shell --run 'make test'
         env:
-          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+         ETH_RPC_URL: https://eth-mainnet.alchemyapi.io/v2/${{ secrets.ALCHEMY_API_KEY }}

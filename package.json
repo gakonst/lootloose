@@ -1,35 +1,24 @@
 {
-  "name": "remix-loot",
-  "version": "1.0.0",
-  "description": "Split your lootbags in their individual pieces",
-  "main": "index.js",
-  "scripts": {
-    "compile": "hardhat compile",
-    "build": "hardhat compile",
-    "test": "hardhat test",
-    "prettify": "./node_modules/.bin/prettier --write contracts/**/*.sol test/**/*.ts",
-    "postinstall": "patch-package"
-  },
+  "name": "lootloose",
   "author": "Georgios Konstantopoulos",
   "license": "GPL-3.0-or-later",
+  "version": "1.0.0",
+  "description": "Split your lootbags in their individual pieces",
+  "files": [
+    "*.sol"
+  ],
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.2",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "@types/chai": "^4.2.21",
-    "@types/mocha": "^9.0.0",
-    "chai": "^4.3.4",
-    "dotenv": "^10.0.0",
-    "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.4.1",
-    "hardhat": "^2.4.3",
-    "hardhat-abi-exporter": "^2.2.1",
-    "hardhat-gas-reporter": "^1.0.4",
-    "patch-package": "^6.4.7",
-    "prettier": "^2.3.2",
-    "ts-node": "^10.1.0",
-    "typescript": "^4.3.5"
+    "copyfiles": "^2.4.1",
+    "ethers": "^5.4.6",
+    "prettier": "^2.3.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.13",
+    "rimraf": "^3.0.2"
   },
-  "dependencies": {
-    "@openzeppelin/contracts": "^4.2.0"
+  "scripts": {
+    "prepublishOnly": "copyfiles -u 1 \"./src/**/*.sol\" --exclude \"./src/test/**/*.sol\" ./",
+    "postpublish": "rimraf ./*.sol",
+    "prepack": "yarn prepublishOnly",
+    "postpack": "yarn postpublish",
+    "lint": "prettier --write src/**/*.sol"
   }
 }
