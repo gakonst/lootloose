@@ -4,10 +4,9 @@ pragma solidity ^0.8.0;
 import "./utils/LootLooseSetup.sol";
 import "./utils/LootAirdrop.sol";
 import {ILootAirdrop} from "../LootLoose.sol";
-import { ItemNames } from "../LootTokensMetadata.sol";
+import {ItemNames} from "../LootTokensMetadata.sol";
 
-
-struct Attribute  {
+struct Attribute {
     string traitType;
     string value;
 }
@@ -58,7 +57,6 @@ contract Metadata is LootLooseTest {
 
     function testBronzeRingOfEnlightenmentMetadata() public {
         uint256 id = lootLoose.ringId(2169);
-        // the expected attributes
         Attribute[] memory attributes = new Attribute[](3);
         attributes[0] = Attribute("Slot", "Ring");
         attributes[1] = Attribute("Item", "Bronze Ring");
@@ -66,7 +64,35 @@ contract Metadata is LootLooseTest {
         assertMetadata(id, attributes, "Bronze Ring of Enlightenment");
     }
 
-    function assertMetadata(uint256 tokenId, Attribute[] memory attributes, string memory name) private {
+    function testDivineRobeMetadata() public {
+        uint256 id = lootLoose.chestId(3686);
+        Attribute[] memory attributes = new Attribute[](2);
+        attributes[0] = Attribute("Slot", "Chest");
+        attributes[1] = Attribute("Item", "Divine Robe");
+        assertMetadata(id, attributes, "Divine Robe");
+    }
+
+    function testTempestGraspGlovesOfProtectionPlusOneMetadata() public {
+        uint256 id = lootLoose.handId(3686);
+        Attribute[] memory attributes = new Attribute[](6);
+        attributes[0] = Attribute("Slot", "Hand");
+        attributes[1] = Attribute("Item", "Gloves");
+        attributes[2] = Attribute("Suffix", "of Protection");
+        attributes[3] = Attribute("Name Prefix", "Tempest");
+        attributes[4] = Attribute("Name Suffix", "Grasp");
+        attributes[5] = Attribute("Augmentation", "Yes");
+        assertMetadata(
+            id,
+            attributes,
+            "'Tempest Grasp' Gloves of Protection +1"
+        );
+    }
+
+    function assertMetadata(
+        uint256 tokenId,
+        Attribute[] memory attributes,
+        string memory name
+    ) private {
         string memory meta = lootLoose.uri(tokenId);
         string[] memory inputs = new string[](3);
         inputs[0] = "node";
@@ -92,9 +118,10 @@ contract Metadata is LootLooseTest {
         assertEq(got.ring, expected.ring);
     }
 
-    function assertEq(Attribute memory attribute, Attribute memory expected) private {
+    function assertEq(Attribute memory attribute, Attribute memory expected)
+        private
+    {
         assertEq(attribute.traitType, expected.traitType);
         assertEq(attribute.value, expected.value);
     }
 }
-
