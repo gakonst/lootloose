@@ -3,14 +3,11 @@
 . ./scripts/common.sh
 
 # Setup addresses file
-# cat > "$OUT_DIR"/addresses.json <<EOF
-# {
-#     "DEPLOYER": "$(seth --to-checksum-address "$FROM")"
-# }
-# EOF
-
-# default to localhost rpc
-RPC_URL=${ETH_RPC_URL:-http://localhost:8545}
+cat > "$ADDRESSES_FILE" <<EOF
+{
+    "DEPLOYER": "$(seth --to-checksum-address "$FROM")"
+}
+EOF
 
 # Mainnet loot address
 MAINNET_LOOT=0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7
