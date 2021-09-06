@@ -23,7 +23,19 @@ deploy() {
 
     # deploy
     ADDRESS=$(dapp create $NAME $ARGS -- --rpc-url $RPC_URL --from $FROM --gas $GAS)
+
+    saveContract $NAME $ADDRESS
+
     echo $ADDRESS
+}
+
+saveContract() {
+    # create an empty json if it does not exist
+    if [[ ! -e $ADDRESSES_FILE ]]; then
+        echo "{}" > $ADDRESSES_FILE
+    fi
+    result=$(cat $ADDRESSES_FILE | jq -r ". + {\"$1\": \"$2\"}")
+    printf %s "$result" > "$ADDRESSES_FILE"
 }
 
 # loads addresses as key-value pairs from $ADDRESSES_FILE and exports them as

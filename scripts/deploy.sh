@@ -2,6 +2,13 @@
 # TODO: Can we make this import work from any directory?
 . ./scripts/common.sh
 
+# Setup addresses file
+# cat > "$OUT_DIR"/addresses.json <<EOF
+# {
+#     "DEPLOYER": "$(seth --to-checksum-address "$FROM")"
+# }
+# EOF
+
 # default to localhost rpc
 RPC_URL=${ETH_RPC_URL:-http://localhost:8545}
 
@@ -13,11 +20,3 @@ LOOT="${LOOT:-$MAINNET_LOOT}"
 # Deploy.
 LootLooseAddr=$(deploy LootLoose $LOOT)
 log "LootLoose deployed at:" $LootLooseAddr
-
-# Log addresses to file
-cat > "$OUT_DIR"/addresses.json <<EOF
-{
-    "DEPLOYER": "$(seth --to-checksum-address "$FROM")",
-    "LOOTLOOSE": "$LootLooseAddr",
-}
-EOF
