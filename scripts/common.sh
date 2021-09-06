@@ -1,9 +1,14 @@
+set +ex;
+
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 export OUT_DIR=${OUT_DIR:-$PWD/out}
 ADDRESSES_FILE="$OUT_DIR/addresses.json"
 export CONFIG_FILE="${OUT_DIR}/config.json"
+
+# default to localhost rpc
+RPC_URL=${ETH_RPC_URL:-http://localhost:8545}
 
 deploy() {
     NAME=$1

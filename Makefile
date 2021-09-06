@@ -20,5 +20,20 @@ test   :; dapp test --ffi
 clean  :; dapp clean
 lint   :; yarn run lint
 
+# returns the URL to deploy to a hosted Alchemy node
+# requires the API_KEY env var to be set
+# the first argument determines the network
+define network
+	https://eth-$1.alchemyapi.io/v2/${API_KEY}
+endef
+
 # Deployment helpers
-deploy :; ./scripts/deploy.sh
+deploy :; @./scripts/deploy.sh
+
+# mainnet
+deploy-mainnet: export ETH_RPC_URL = $(call network,mainnet)
+deploy-mainnet: deploy
+
+# rinkeby
+deploy-rinkeby: export ETH_RPC_URL = $(call network,rinkeby)
+deploy-rinkeby: deploy
