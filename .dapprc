@@ -8,6 +8,10 @@ export DAPP_LINK_TEST_LIBRARIES=0
 export DAPP_TEST_VERBOSITY=1
 export DAPP_TEST_SMTTIMEOUT=500000
 
+# Allow using the local network's RPC accounts if `ETH_FROM`
+# is not in the keystore
+export ETH_RPC_ACCOUNTS=yes
+
 if [ "$DEEP_FUZZ" == "true" ]
 then 
   export DAPP_TEST_FUZZ_RUNS=50000 # Fuzz for a long time if DEEP_FUZZ is set to true.
