@@ -7,12 +7,16 @@ export CONFIG_FILE="${OUT_DIR}/config.json"
 
 deploy() {
     NAME=$1
-    SIG=$2
-    ARGS=${@:3}
+    ARGS=${@:2}
+    # select the filename and the contract in it
+    PATTERN=".contracts[\"src/$NAME.sol\"].$NAME"
+
+    # get the constructor's signature
+    ABI=$(jq -r "$PATTERN.abi" out/dapp.sol.json)
+    SIG=$(echo $ABI | seth --abi-constructor)
 
     # get the bytecode from the compiled file
-    PATTERN=".contracts[\"src/$NAME.sol\"].$NAME.evm.bytecode.object"
-    BYTECODE=0x$(cat out/dapp.sol.json | jq -r "$PATTERN")
+    BYTECODE=0x$(jq -r "$PATTERN.evm.bytecode.object" out/dapp.sol.json)
 
     # estimate gas
     GAS=$(seth estimate --create $BYTECODE $SIG $ARGS --rpc-url $RPC_URL --from $FROM)
