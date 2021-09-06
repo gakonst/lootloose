@@ -19,3 +19,4 @@ build  :; dapp build
 test   :; dapp test --ffi
 clean  :; dapp clean
 lint   :; yarn run lint
+deploy :; ./scripts/deploy.sh
