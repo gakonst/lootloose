@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-08-30
- */
-
 // SPDX-License-Identifier: Unlicense
 
 /*
@@ -11,7 +7,7 @@
     This is a utility contract to make it easier for other
     contracts to work with Loot properties.
     
-    Call weaponComponents(), chestComponents(), etc. to get 
+    Call weaponComponents(), clothesComponents(), etc. to get 
     an array of attributes that correspond to the item. 
     
     The return format is:
@@ -31,253 +27,285 @@ pragma solidity ^0.8.4;
 
 contract LootComponents {
     string[] internal weapons = [
-        "Warhammer", // 0
-        "Quarterstaff", // 1
-        "Maul", // 2
-        "Mace", // 3
-        "Club", // 4
-        "Katana", // 5
-        "Falchion", // 6
-        "Scimitar", // 7
-        "Long Sword", // 8
-        "Short Sword", // 9
-        "Ghost Wand", // 10
-        "Grave Wand", // 11
-        "Bone Wand", // 12
-        "Wand", // 13
-        "Grimoire", // 14
-        "Chronicle", // 15
-        "Tome", // 16
-        "Book" // 17
+        "Pocket Knife", // 0
+        "Chain", // 1
+        "Knife", // 2
+        "Crowbar", // 3
+        "Handgun", // 4
+        "AK47", // 5
+        "Shovel", // 6
+        "Baseball Bat", // 7
+        "Tire Iron", // 8
+        "Police Baton", // 9
+        "Pepper Spray", // 10
+        "Razor Blade", // 11
+        "Chain", // 12
+        "Taser", // 13
+        "Brass Knuckles", // 14
+        "Shotgun", // 15
+        "Glock", // 16
+        "Uzi" // 17
     ];
     uint256 constant weaponsLength = 18;
 
-    string[] internal chestArmor = [
-        "Divine Robe", // 0
-        "Silk Robe", // 1
-        "Linen Robe", // 2
-        "Robe", // 3
-        "Shirt", // 4
-        "Demon Husk", // 5
-        "Dragonskin Armor", // 6
-        "Studded Leather Armor", // 7
-        "Hard Leather Armor", // 8
-        "Leather Armor", // 9
-        "Holy Chestplate", // 10
-        "Ornate Chestplate", // 11
-        "Plate Mail", // 12
-        "Chain Mail", // 13
-        "Ring Mail" // 14
+    string[] internal clothes = [
+        "White T Shirt", // 0
+        "Black T Shirt", // 1
+        "White Hoodie", // 2
+        "Black Hoodie", // 3
+        "Bulletproof Vest", // 4
+        "3 Piece Suit", // 5
+        "Checkered Shirt", // 6
+        "Bikini", // 7
+        "Golden Shirt", // 8
+        "Leather Vest", // 9
+        "Blood Stained Shirt", // 10
+        "Police Uniform", // 11
+        "Combat Jacket", // 12
+        "Basketball Jersey", // 13
+        "Track Suit", // 14
+        "Trenchcoat", // 15
+        "White Tank Top", // 16
+        "Black Tank Top", // 17
+        "Shirtless", // 18
+        "Naked" // 19
     ];
-    uint256 constant chestLength = 15;
+    uint256 constant clothesLength = 20;
 
-    string[] internal headArmor = [
-        "Ancient Helm", // 0
-        "Ornate Helm", // 1
-        "Great Helm", // 2
-        "Full Helm", // 3
-        "Helm", // 4
-        "Demon Crown", // 5
-        "Dragon's Crown", // 6
-        "War Cap", // 7
-        "Leather Cap", // 8
-        "Cap", // 9
-        "Crown", // 10
-        "Divine Hood", // 11
-        "Silk Hood", // 12
-        "Linen Hood", // 13
-        "Hood" // 14
+    string[] internal vehicle = [
+        "Dodge", // 0
+        "Porsche", // 1
+        "Tricycle", // 2
+        "Scooter", // 3
+        "ATV", // 4
+        "Push Bike", // 5
+        "Electric Scooter", // 6
+        "Golf Cart", // 7
+        "Chopper", // 8
+        "Rollerblades", // 9
+        "Lowrider", // 10
+        "Camper", // 11
+        "Rolls Royce", // 12
+        "BMW M3", // 13
+        "Bike", // 14
+        "C63 AMG", // 15
+        "G Wagon" // 16
     ];
-    uint256 constant headLength = 15;
+    uint256 constant vehicleLength = 17;
 
     string[] internal waistArmor = [
-        "Ornate Belt", // 0
-        "War Belt", // 1
-        "Plated Belt", // 2
-        "Mesh Belt", // 3
-        "Heavy Belt", // 4
-        "Demonhide Belt", // 5
-        "Dragonskin Belt", // 6
-        "Studded Leather Belt", // 7
-        "Hard Leather Belt", // 8
-        "Leather Belt", // 9
-        "Brightsilk Sash", // 10
-        "Silk Sash", // 11
-        "Wool Sash", // 12
-        "Linen Sash", // 13
-        "Sash" // 14
+        "Gucci Belt", // 0
+        "Versace Belt", // 1
+        "Studded Belt", // 2
+        "Taser Holster", // 3
+        "Concealed Holster", // 4
+        "Diamond Belt", // 5
+        "D Ring Belt", // 6
+        "Suspenders", // 7
+        "Military Belt", // 8
+        "Metal Belt", // 9
+        "Pistol Holster", // 10
+        "SMG Holster", // 11
+        "Knife Holster", // 12
+        "Laces", // 13
+        "Sash", // 14
+        "Fanny Pack" // 15
     ];
-    uint256 constant waistLength = 15;
+    uint256 constant waistLength = 16;
 
     string[] internal footArmor = [
-        "Holy Greaves", // 0
-        "Ornate Greaves", // 1
-        "Greaves", // 2
-        "Chain Boots", // 3
-        "Heavy Boots", // 4
-        "Demonhide Boots", // 5
-        "Dragonskin Boots", // 6
-        "Studded Leather Boots", // 7
-        "Hard Leather Boots", // 8
-        "Leather Boots", // 9
-        "Divine Slippers", // 10
-        "Silk Slippers", // 11
-        "Wool Shoes", // 12
-        "Linen Shoes", // 13
-        "Shoes" // 14
+        "Black Air Force 1s", // 0
+        "White Forces", // 1
+        "Air Jordan 1 Chicagos", // 2
+        "Gucci Tennis 84", // 3
+        "Air Max 95", // 4
+        "Timberlands", // 5
+        "Reebok Classics", // 6
+        "Flip Flops", // 7
+        "Nike Cortez", // 8
+        "Dress Shoes", // 9
+        "Converse All Stars", // 10
+        "White Slippers", // 11
+        "Gucci Slides", // 12
+        "Alligator Dress Shoes", // 13
+        "Socks", // 14
+        "Open Toe Sandals", // 15
+        "Barefoot" // 16
     ];
-    uint256 constant footLength = 15;
+    uint256 constant footLength = 17;
 
     string[] internal handArmor = [
-        "Holy Gauntlets", // 0
-        "Ornate Gauntlets", // 1
-        "Gauntlets", // 2
-        "Chain Gloves", // 3
-        "Heavy Gloves", // 4
-        "Demon's Hands", // 5
-        "Dragonskin Gloves", // 6
-        "Studded Leather Gloves", // 7
-        "Hard Leather Gloves", // 8
-        "Leather Gloves", // 9
-        "Divine Gloves", // 10
-        "Silk Gloves", // 11
-        "Wool Gloves", // 12
-        "Linen Gloves", // 13
-        "Gloves" // 14
+        "Rubber Gloves", // 0
+        "Baseball Gloves", // 1
+        "Boxing Gloves", // 2
+        "MMA Wraps", // 3
+        "Winter Gloves", // 4
+        "Nitrile Gloves", // 5
+        "Studded Leather Gloves", // 6
+        "Combat Gloves", // 7
+        "Leather Gloves", // 8
+        "White Gloves", // 9
+        "Black Gloves", // 10
+        "Kevlar Gloves", // 11
+        "Surgical Gloves", // 12
+        "Fingerless Gloves" // 13
     ];
-    uint256 constant handLength = 15;
+    uint256 constant handLength = 14;
 
     string[] internal necklaces = [
-        "Necklace", // 0
-        "Amulet", // 1
-        "Pendant" // 2
+        "Bronze Chain", // 0
+        "Silver Chain", // 1
+        "Gold Chain" // 2
     ];
     uint256 constant necklacesLength = 3;
 
     string[] internal rings = [
         "Gold Ring", // 0
         "Silver Ring", // 1
-        "Bronze Ring", // 2
+        "Diamond Ring", // 2
         "Platinum Ring", // 3
-        "Titanium Ring" // 4
+        "Titanium Ring", // 4
+        "Pinky Ring", // 5
+        "Thumb Ring" // 6
     ];
-    uint256 constant ringsLength = 5;
+    uint256 constant ringsLength = 7;
+
+    string[] internal drugs = [
+        "Weed", // 0
+        "Cocaine", // 1
+        "Ludes", // 2
+        "Acid", // 3
+        "Speed", // 4
+        "Heroin", // 5
+        "Oxycontin", // 6
+        "Zoloft", // 7
+        "Fentanyl", // 8
+        "Krokodil", // 9
+        "Coke", // 10
+        "Crack", // 11
+        "PCP", // 12
+        "LSD", // 13
+        "Shrooms", // 14
+        "Soma", // 15
+        "Xanax", // 16
+        "Molly", // 17
+        "Adderall" // 18
+    ];
+    uint256 constant drugsLength = 19;
 
     string[] internal suffixes = [
         // <no suffix>          // 0
-        "of Power", // 1
-        "of Giants", // 2
-        "of Titans", // 3
-        "of Skill", // 4
-        "of Perfection", // 5
-        "of Brilliance", // 6
-        "of Enlightenment", // 7
-        "of Protection", // 8
-        "of Anger", // 9
-        "of Rage", // 10
-        "of Fury", // 11
-        "of Vitriol", // 12
-        "of the Fox", // 13
-        "of Detection", // 14
-        "of Reflection", // 15
-        "of the Twins" // 16
+        "from the Bayou", // 1
+        "from Atlanta", // 2
+        "from Compton", // 3
+        "from Oakland", // 4
+        "from SOMA", // 5
+        "from Hong Kong", // 6
+        "from London", // 7
+        "from Chicago", // 8
+        "from Brooklyn", // 9
+        "from Detroit", // 10
+        "from Mob Town", // 11
+        "from Murdertown", // 12
+        "from Sin City", // 13
+        "from Big Smoke", // 14
+        "from the Backwoods", // 15
+        "from the Big Easy", // 16
+        "from Queens", // 17
+        "from BedStuy", // 18
+        "from Buffalo" // 19
     ];
-    uint256 constant suffixesLength = 16;
+    uint256 constant suffixesLength = 19;
 
     string[] internal namePrefixes = [
         // <no name>            // 0
-        "Agony", // 1
-        "Apocalypse", // 2
-        "Armageddon", // 3
-        "Beast", // 4
-        "Behemoth", // 5
-        "Blight", // 6
-        "Blood", // 7
-        "Bramble", // 8
-        "Brimstone", // 9
-        "Brood", // 10
-        "Carrion", // 11
-        "Cataclysm", // 12
-        "Chimeric", // 13
-        "Corpse", // 14
-        "Corruption", // 15
-        "Damnation", // 16
-        "Death", // 17
-        "Demon", // 18
-        "Dire", // 19
-        "Dragon", // 20
-        "Dread", // 21
-        "Doom", // 22
-        "Dusk", // 23
-        "Eagle", // 24
-        "Empyrean", // 25
-        "Fate", // 26
-        "Foe", // 27
-        "Gale", // 28
-        "Ghoul", // 29
-        "Gloom", // 30
-        "Glyph", // 31
-        "Golem", // 32
-        "Grim", // 33
-        "Hate", // 34
-        "Havoc", // 35
-        "Honour", // 36
-        "Horror", // 37
-        "Hypnotic", // 38
-        "Kraken", // 39
-        "Loath", // 40
-        "Maelstrom", // 41
-        "Mind", // 42
-        "Miracle", // 43
-        "Morbid", // 44
-        "Oblivion", // 45
-        "Onslaught", // 46
-        "Pain", // 47
-        "Pandemonium", // 48
-        "Phoenix", // 49
-        "Plague", // 50
-        "Rage", // 51
-        "Rapture", // 52
-        "Rune", // 53
-        "Skull", // 54
-        "Sol", // 55
-        "Soul", // 56
-        "Sorrow", // 57
-        "Spirit", // 58
-        "Storm", // 59
-        "Tempest", // 60
-        "Torment", // 61
-        "Vengeance", // 62
-        "Victory", // 63
-        "Viper", // 64
-        "Vortex", // 65
-        "Woe", // 66
-        "Wrath", // 67
-        "Light's", // 68
-        "Shimmering" // 69
+        "OG", // 1
+        "King of the Street", // 2
+        "Cop Killer", // 3
+        "Blasta", // 4
+        "Lil", // 5
+        "Big", // 6
+        "Tiny", // 7
+        "Playboi", // 8
+        "Snitch boi", // 9
+        "Kingpin", // 10
+        "Father of the Game", // 11
+        "Son of the Game", // 12
+        "Loose Trigger Finger", // 13
+        "Slum Prince", // 14
+        "Corpse", // 15
+        "Mother of the Game", // 16
+        "Daughter of the Game", // 17
+        "Slum Princess", // 18
+        "Da", // 19
+        "Notorious", // 20
+        "The Boss of Bosses", // 21
+        "The Dog Killer", // 22
+        "The Killer of Dog Killer", // 23
+        "Slum God", // 24
+        "Candyman", // 25
+        "Candywoman", // 26
+        "The Butcher", // 27
+        "Yung Capone", // 28
+        "Yung Chapo", // 29
+        "Yung Blanco", // 30
+        "The Fixer", // 31
+        "Jail Bird", // 32
+        "Corner Cockatoo", // 33
+        "Powder Prince", // 34
+        "Hippie", // 35
+        "John E. Dell", // 36
+        "The Burning Man", // 37
+        "The Burning Woman", // 38
+        "Kid of the Game", // 39
+        "Street Queen", // 40
+        "The Killer of Dog Killers Killer", // 41
+        "Slum General", // 42
+        "Mafia Prince", // 43
+        "Crooked Cop", // 44
+        "Street Mayor", // 45
+        "Undercover Cop", // 46
+        "Oregano Farmer", // 47
+        "Bloody", // 48
+        "High on the Supply", // 49
+        "The Orphan", // 50
+        "The Orphan Maker", // 51
+        "Ex Boxer", // 52
+        "Ex Cop", // 53
+        "Ex School Teacher", // 54
+        "Ex Priest", // 55
+        "Ex Engineer", // 56
+        "Street Robinhood", // 57
+        "Hell Bound", // 58
+        "SoundCloud Rapper", // 59
+        "Gang Leader", // 60
+        "The CEO", // 61
+        "The Freelance Pharmacist", // 62
+        "Soccer Mom", // 63
+        "Soccer Dad" // 64
     ];
-    uint256 constant namePrefixesLength = 69;
+    uint256 constant namePrefixesLength = 64;
 
     string[] internal nameSuffixes = [
         // <no name>            // 0
-        "Bane", // 1
-        "Root", // 2
-        "Bite", // 3
-        "Song", // 4
-        "Roar", // 5
-        "Grasp", // 6
-        "Instrument", // 7
-        "Glow", // 8
-        "Bender", // 9
-        "Shadow", // 10
-        "Whisper", // 11
-        "Shout", // 12
-        "Growl", // 13
-        "Tear", // 14
-        "Peak", // 15
-        "Form", // 16
-        "Sun", // 17
-        "Moon" // 18
+        "Feared", // 1
+        "Baron", // 2
+        "Vicious", // 3
+        "Killer", // 4
+        "Fugitive", // 5
+        "Triggerman", // 6
+        "Conman", // 7
+        "Outlaw", // 8
+        "Assassin", // 9
+        "Shooter", // 10
+        "Hitman", // 11
+        "Bloodstained", // 12
+        "Punishment", // 13
+        "Sin", // 14
+        "Smuggled", // 15
+        "LastResort", // 16
+        "Contraband", // 17
+        "Illicit" // 18
     ];
     uint256 constant nameSuffixesLength = 18;
 
@@ -293,20 +321,20 @@ contract LootComponents {
         return pluck(tokenId, "WEAPON", weaponsLength);
     }
 
-    function chestComponents(uint256 tokenId)
+    function clothesComponents(uint256 tokenId)
         internal
         pure
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "CHEST", chestLength);
+        return pluck(tokenId, "CLOTHES", clothesLength);
     }
 
-    function headComponents(uint256 tokenId)
+    function vehicleComponents(uint256 tokenId)
         internal
         pure
         returns (uint256[5] memory)
     {
-        return pluck(tokenId, "HEAD", headLength);
+        return pluck(tokenId, "VEHICLE", vehicleLength);
     }
 
     function waistComponents(uint256 tokenId)
@@ -331,6 +359,14 @@ contract LootComponents {
         returns (uint256[5] memory)
     {
         return pluck(tokenId, "HAND", handLength);
+    }
+
+    function drugsComponents(uint256 tokenId)
+        internal
+        pure
+        returns (uint256[5] memory)
+    {
+        return pluck(tokenId, "DRUGS", drugsLength);
     }
 
     function neckComponents(uint256 tokenId)

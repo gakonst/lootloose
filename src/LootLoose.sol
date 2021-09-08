@@ -10,11 +10,17 @@ import "./LootTokensMetadata.sol";
 
 interface ILootAirdrop {
     function claimForLoot(uint256) external payable;
-    function safeTransferFrom(address, address, uint256) external payable;
+
+    function safeTransferFrom(
+        address,
+        address,
+        uint256
+    ) external payable;
 }
 
 library Errors {
-    string constant DoesNotOwnLootbag = "you do not own the lootbag for this airdrop";
+    string constant DoesNotOwnLootbag =
+        "you do not own the lootbag for this airdrop";
     string constant IsNotLoot = "msg.sender is not the loot contract";
 }
 
@@ -41,7 +47,10 @@ contract LootLoose is ERC1155, LootTokensMetadata {
 
     /// @notice Claims an airdrop for a token owned by LootLoose. The airdrop is then
     /// claimable by the owner of the reassembled pieces.
-    function claimAirdropForLootLoose(ILootAirdrop airdrop, uint256 tokenId) external payable {
+    function claimAirdropForLootLoose(ILootAirdrop airdrop, uint256 tokenId)
+        external
+        payable
+    {
         airdrop.claimForLoot{value: msg.value}(tokenId);
     }
 
@@ -65,22 +74,23 @@ contract LootLoose is ERC1155, LootTokensMetadata {
         return LootLoose.onERC721Received.selector;
     }
 
-    /// @notice Opens your Loot bag and mints you 8 ERC-1155 tokens for each item
+    /// @notice Opens your Loot bag and mints you 9 ERC-1155 tokens for each item
     /// in that bag
     function open(address who, uint256 tokenId) private {
         // NB: We patched ERC1155 to expose `_balances` so
         // that we can manually mint to a user, and manually emit a `TransferBatch`
         // event. If that's unsafe, we can fallback to using _mint
-        uint256[] memory ids = new uint256[](8);
-        uint256[] memory amounts = new uint256[](8);
+        uint256[] memory ids = new uint256[](9);
+        uint256[] memory amounts = new uint256[](9);
         ids[0] = itemId(tokenId, weaponComponents, WEAPON);
-        ids[1] = itemId(tokenId, chestComponents, CHEST);
-        ids[2] = itemId(tokenId, headComponents, HEAD);
+        ids[1] = itemId(tokenId, clothesComponents, CLOTHES);
+        ids[2] = itemId(tokenId, vehicleComponents, VEHICLE);
         ids[3] = itemId(tokenId, waistComponents, WAIST);
         ids[4] = itemId(tokenId, footComponents, FOOT);
         ids[5] = itemId(tokenId, handComponents, HAND);
-        ids[6] = itemId(tokenId, neckComponents, NECK);
-        ids[7] = itemId(tokenId, ringComponents, RING);
+        ids[6] = itemId(tokenId, drugsComponents, DRUGS);
+        ids[7] = itemId(tokenId, neckComponents, NECK);
+        ids[8] = itemId(tokenId, ringComponents, RING);
         for (uint256 i = 0; i < ids.length; i++) {
             amounts[i] = 1;
             // +21k per call / unavoidable - requires patching OZ
@@ -97,11 +107,12 @@ contract LootLoose is ERC1155, LootTokensMetadata {
     function reassemble(uint256 tokenId) external {
         // 1. burn the items
         burnItem(tokenId, weaponComponents, WEAPON);
-        burnItem(tokenId, chestComponents, CHEST);
-        burnItem(tokenId, headComponents, HEAD);
+        burnItem(tokenId, clothesComponents, CLOTHES);
+        burnItem(tokenId, vehicleComponents, VEHICLE);
         burnItem(tokenId, waistComponents, WAIST);
         burnItem(tokenId, footComponents, FOOT);
         burnItem(tokenId, handComponents, HAND);
+        burnItem(tokenId, drugsComponents, DRUGS);
         burnItem(tokenId, neckComponents, NECK);
         burnItem(tokenId, ringComponents, RING);
 

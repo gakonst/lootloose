@@ -19,72 +19,81 @@ struct Data {
 }
 
 contract Metadata is LootLooseTest {
-    function testKatanaBagNames() public {
+    function testAK47BagNames() public {
         ItemNames memory expected = ItemNames({
-            weapon: "Katana",
-            chest: "Divine Robe",
-            head: "Great Helm",
-            waist: "Wool Sash",
-            foot: "Divine Slippers",
-            hand: "Chain Gloves",
-            neck: "Amulet",
-            ring: "Gold Ring"
+            weapon: "AK47",
+            clothes: "White T Shirt",
+            vehicle: "Tricycle",
+            waist: "Taser Holster",
+            foot: "White Forces",
+            hand: "Fingerless Gloves",
+            drugs: "Adderall",
+            neck: "Silver Chain",
+            ring: "Platinum Ring"
         });
 
-        // https://opensea.io/assets/0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7/5726
+        // https://opensea.io/assets/0x8707276df042e89669d69a177d3da7dc78bd8723/5726
         uint256 id = 5726;
         ItemNames memory names = lootLoose.names(id);
         assertEq(names, expected);
     }
 
-    function testDivineRobeBagNames() public {
+    function testShovelFromSOMABagNames() public {
         ItemNames memory expected = ItemNames({
-            weapon: "Falchion of Fury",
-            chest: "Divine Robe",
-            head: "Great Helm",
-            waist: "'Grim Peak' Sash of Enlightenment +1",
-            foot: "Linen Shoes of Titans",
-            hand: "'Tempest Grasp' Gloves of Protection +1",
-            neck: "Necklace of Protection",
-            ring: "Bronze Ring"
+            weapon: "Shovel from SOMA",
+            clothes: "'High on the Supply Contraband' Bulletproof Vest from Mob Town",
+            vehicle: "'The Freelance Pharmacist Triggerman' Dodge from Compton +1",
+            waist: "'Kid of the Game Smuggled' D Ring Belt from Queens +1",
+            foot: "Barefoot from Chicago",
+            hand: "'Street Queen Triggerman' Fingerless Gloves from Buffalo +1",
+            drugs: "Shrooms",
+            neck: "Bronze Chain from the Backwoods",
+            ring: "Diamond Ring"
         });
 
-        // https://opensea.io/assets/0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7/5726
+        // https://opensea.io/assets/0x8707276df042e89669d69a177d3da7dc78bd8723/3686
         uint256 id = 3686;
         ItemNames memory names = lootLoose.names(id);
         assertEq(names, expected);
     }
 
-    function testBronzeRingOfEnlightenmentMetadata() public {
+    function testPlatinumRingFromAtlantaMetadata() public {
         uint256 id = lootLoose.ringId(2169);
         Attribute[] memory attributes = new Attribute[](3);
         attributes[0] = Attribute("Slot", "Ring");
-        attributes[1] = Attribute("Item", "Bronze Ring");
-        attributes[2] = Attribute("Suffix", "of Enlightenment");
-        assertMetadata(id, attributes, "Bronze Ring of Enlightenment");
+        attributes[1] = Attribute("Item", "Platinum Ring");
+        attributes[2] = Attribute("Suffix", "from Atlanta");
+        assertMetadata(id, attributes, "Platinum Ring from Atlanta");
     }
 
-    function testDivineRobeMetadata() public {
-        uint256 id = lootLoose.chestId(3686);
-        Attribute[] memory attributes = new Attribute[](2);
-        attributes[0] = Attribute("Slot", "Chest");
-        attributes[1] = Attribute("Item", "Divine Robe");
-        assertMetadata(id, attributes, "Divine Robe");
+    function testHighSupplyBloodStainedShirtFromMobTownMetadata() public {
+        uint256 id = lootLoose.clothesId(3686);
+        Attribute[] memory attributes = new Attribute[](5);
+        attributes[0] = Attribute("Slot", "Clothes");
+        attributes[1] = Attribute("Item", "Bulletproof Vest");
+        attributes[2] = Attribute("Suffix", "from Mob Town");
+        attributes[3] = Attribute("Name Prefix", "High on the Supply");
+        attributes[4] = Attribute("Name Suffix", "Contraband");
+        assertMetadata(
+            id,
+            attributes,
+            "'High on the Supply Contraband' Bulletproof Vest from Mob Town"
+        );
     }
 
-    function testTempestGraspGlovesOfProtectionPlusOneMetadata() public {
+    function testTriggermanFingerlessGlovesFromBuffaloPlusOneMetadata() public {
         uint256 id = lootLoose.handId(3686);
         Attribute[] memory attributes = new Attribute[](6);
         attributes[0] = Attribute("Slot", "Hand");
-        attributes[1] = Attribute("Item", "Gloves");
-        attributes[2] = Attribute("Suffix", "of Protection");
-        attributes[3] = Attribute("Name Prefix", "Tempest");
-        attributes[4] = Attribute("Name Suffix", "Grasp");
+        attributes[1] = Attribute("Item", "Fingerless Gloves");
+        attributes[2] = Attribute("Suffix", "from Buffalo");
+        attributes[3] = Attribute("Name Prefix", "Street Queen");
+        attributes[4] = Attribute("Name Suffix", "Triggerman");
         attributes[5] = Attribute("Augmentation", "Yes");
         assertMetadata(
             id,
             attributes,
-            "'Tempest Grasp' Gloves of Protection +1"
+            "'Street Queen Triggerman' Fingerless Gloves from Buffalo +1"
         );
     }
 
@@ -109,11 +118,12 @@ contract Metadata is LootLooseTest {
     // Would be nice if we had some Rust-like derive macro for this :/ wen Solidity generics
     function assertEq(ItemNames memory got, ItemNames memory expected) private {
         assertEq(got.weapon, expected.weapon);
-        assertEq(got.chest, expected.chest);
-        assertEq(got.head, expected.head);
+        assertEq(got.clothes, expected.clothes);
+        assertEq(got.vehicle, expected.vehicle);
         assertEq(got.waist, expected.waist);
         assertEq(got.foot, expected.foot);
         assertEq(got.hand, expected.hand);
+        assertEq(got.drugs, expected.drugs);
         assertEq(got.neck, expected.neck);
         assertEq(got.ring, expected.ring);
     }

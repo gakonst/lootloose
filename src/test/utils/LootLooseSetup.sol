@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "ds-test/test.sol";
 
 import "./Hevm.sol";
-import "./Loot.sol";
+import "../../Loot.sol";
 import { ILootAirdrop, LootLoose, Errors } from "../../LootLoose.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
@@ -13,10 +13,10 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 // NB: Using callbacks is hard, since we're a smart contract account we need
 // to be implementing the callbacks
 contract LootLooseUser is ERC721Holder, ERC1155Holder {
-    Loot loot;
+    DopeWarsLoot loot;
     LootLoose lootLoose;
 
-    constructor(Loot _loot, LootLoose _lootLoose) {
+    constructor(DopeWarsLoot _loot, LootLoose _lootLoose) {
         loot = _loot;
         lootLoose = _lootLoose;
     }
@@ -59,7 +59,7 @@ contract LootLooseTest is DSTest {
         Hevm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
     // contracts
-    Loot internal loot;
+    DopeWarsLoot internal loot;
     LootLoose internal lootLoose;
 
     // users
@@ -67,7 +67,7 @@ contract LootLooseTest is DSTest {
 
     function setUp() public virtual {
         // deploy contracts
-        loot = new Loot();
+        loot = new DopeWarsLoot();
         lootLoose = new LootLoose(address(loot));
 
         // create alice's account & claim a bag

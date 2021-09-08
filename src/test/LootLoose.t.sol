@@ -36,11 +36,12 @@ contract Open is LootLooseTest {
     function checkOwns1155s(uint256 tokenId, address who) private {
         ItemIds memory ids = lootLoose.ids(tokenId);
         assertEq(lootLoose.balanceOf(who, ids.weapon), 1);
-        assertEq(lootLoose.balanceOf(who, ids.chest), 1);
-        assertEq(lootLoose.balanceOf(who, ids.head), 1);
+        assertEq(lootLoose.balanceOf(who, ids.clothes), 1);
+        assertEq(lootLoose.balanceOf(who, ids.vehicle), 1);
         assertEq(lootLoose.balanceOf(who, ids.waist), 1);
         assertEq(lootLoose.balanceOf(who, ids.foot), 1);
         assertEq(lootLoose.balanceOf(who, ids.hand), 1);
+        assertEq(lootLoose.balanceOf(who, ids.drugs), 1);
         assertEq(lootLoose.balanceOf(who, ids.neck), 1);
         assertEq(lootLoose.balanceOf(who, ids.ring), 1);
     }
@@ -69,7 +70,9 @@ contract Reassemble is LootLooseTest {
     }
 
     function testCannotReassembleBagYouDoNotOwn() public {
-        try alice.reassemble(OTHER_BAG) { fail(); } catch Error(string memory error) {
+        try alice.reassemble(OTHER_BAG) {
+            fail();
+        } catch Error(string memory error) {
             assertEq(error, "ERC1155: burn amount exceeds balance");
         }
     }
@@ -77,7 +80,9 @@ contract Reassemble is LootLooseTest {
     function testCannotReassembleWithoutOwningAllPieces() public {
         uint256 id = lootLoose.weaponId(BAG);
         alice.transferERC1155(address(bob), id, 1);
-        try alice.reassemble(BAG) { fail(); } catch Error(string memory error) {
+        try alice.reassemble(BAG) {
+            fail();
+        } catch Error(string memory error) {
             assertEq(error, "ERC1155: burn amount exceeds balance");
         }
     }
@@ -116,9 +121,9 @@ contract Airdrop is LootLooseTest {
             BAG
         );
 
-        try alice.claimAirdrop(address(airdrop), BAG) { fail(); } catch Error(
-            string memory error
-        ) {
+        try alice.claimAirdrop(address(airdrop), BAG) {
+            fail();
+        } catch Error(string memory error) {
             assertEq(error, Errors.DoesNotOwnLootbag);
         }
     }
