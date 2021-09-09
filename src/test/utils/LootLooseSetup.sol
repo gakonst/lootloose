@@ -5,7 +5,7 @@ import "ds-test/test.sol";
 
 import "./Hevm.sol";
 import "../../Loot.sol";
-import { ILootAirdrop, LootLoose, Errors } from "../../LootLoose.sol";
+import { LootLoose } from "../../LootLoose.sol";
 
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
@@ -21,34 +21,16 @@ contract LootLooseUser is ERC721Holder, ERC1155Holder {
         lootLoose = _lootLoose;
     }
 
-    function setApprovalForAll(address who, bool status) public {
-        lootLoose.setApprovalForAll(who, status);
-    }
-
     function claim(uint256 tokenId) public {
         loot.claim(tokenId);
     }
 
     function open(uint256 tokenId) public {
-        loot.safeTransferFrom(address(this), address(lootLoose), tokenId);
-    }
-
-    // 2 txs
-    function openWithApproval(uint256 tokenId) public {
-        loot.approve(address(lootLoose), tokenId);
         lootLoose.open(tokenId);
-    }
-
-    function reassemble(uint256 tokenId) public {
-        lootLoose.reassemble(tokenId);
     }
 
     function transferERC1155(address to, uint256 tokenId, uint256 amount) public {
         lootLoose.safeTransferFrom(address(this), to, tokenId, amount, "0x");
-    }
-
-    function claimAirdrop(address airdrop, uint256 tokenId) public {
-        lootLoose.claimAirdrop(ILootAirdrop(airdrop), tokenId);
     }
 }
 

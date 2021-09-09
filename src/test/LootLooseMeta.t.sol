@@ -2,8 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "./utils/LootLooseSetup.sol";
-import "./utils/LootAirdrop.sol";
-import {ILootAirdrop} from "../LootLoose.sol";
 import {ItemNames} from "../LootTokensMetadata.sol";
 
 struct Attribute {
