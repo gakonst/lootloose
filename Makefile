@@ -1,4 +1,6 @@
-install: update npm patch solc
+all: update patch solc
+
+install: npm patch
 
 # dapp deps
 update:; dapp update
