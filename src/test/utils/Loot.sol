@@ -2,9 +2,9 @@
 pragma solidity ^0.8.4;
 
 import { Base64} from "../../MetadataUtils.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "openzeppelin-contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "openzeppelin-contracts/security/ReentrancyGuard.sol";
+import "openzeppelin-contracts/access/Ownable.sol";
 
 contract Loot is ERC721Enumerable, ReentrancyGuard, Ownable {
 

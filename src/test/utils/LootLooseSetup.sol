@@ -7,8 +7,8 @@ import "./Hevm.sol";
 import "./Loot.sol";
 import { ILootAirdrop, LootLoose, Errors } from "../../LootLoose.sol";
 
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "openzeppelin-contracts/token/ERC721/utils/ERC721Holder.sol";
+import "openzeppelin-contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 // NB: Using callbacks is hard, since we're a smart contract account we need
 // to be implementing the callbacks
